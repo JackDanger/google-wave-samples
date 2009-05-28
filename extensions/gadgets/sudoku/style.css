@@ -13,9 +13,8 @@ body {
 }
 
 #messages {
-  height: 70px;
+  height: 100px;
   border: 0px solid red;
-  font-size: 10px;
   color: black;
   text-align: left;
 }
@@ -23,12 +22,12 @@ body {
 #info {
   width: 300px;
   float: left;
-  margin-left: 20px;
+  margin-left: 20px; 
+  font-size: 13px;
 }
 
-#rankingDisplay {  
+#rankingDisplay {
   border: 0px dotted red;
-  font-size: 10px;
   color: black;
   text-align: left;
   padding: 2px;

@@ -4,7 +4,7 @@ window.DEBUG = false;
 window.PUZZLE_KEY = 'PUZZLE';
 window.SOLUTION_KEY = 'SOLUTION';
 window.CELL_STATE_RE = /^cell_([0-9]+)$/;
-window.PENALTY_STATE_RE = /^penalty_([a-zA-Z0-9_\-@.]+)$/;
+window.PENALTY_STATE_RE = /^penalty_(.+)$/;
 
 // sudoku generator object
 window.generator = null;
@@ -39,7 +39,7 @@ function init() {
     wave.setParticipantCallback(function() {
 
       if (wave.getViewer() != null && window.viewerId == null) {
-        window.viewerId = wave.getViewer().getId();
+        window.viewerId = wave.getViewer().getDisplayName();
         // init the area heading
         updateMessages();
         updateRankingDisplay();
@@ -62,7 +62,7 @@ function appendMessage(msg) {
 function updateMessages() {
 
   var html = [];
-  html.push('<b>Game updates:</b><br><br>');
+  html.push('<b>Updates:</b><br><br>');
   html.push(messages.join('<br>'));
 
   jQuery('#messages').html(html.join(''));
@@ -121,6 +121,7 @@ function updateGameProgress() {
     } else {
       if (key.match(window.PENALTY_STATE_RE)) {        
         var playerName = RegExp.$1;
+        //playerName = playerName.replace(/\*/g, ' ');
         // handle the penalty count
         var penalty = wave.getState().get(key);        
         debug('penalty for ' + playerName + '=' + penalty);
@@ -135,7 +136,7 @@ function updateGameProgress() {
           playerRecord.penalty = penalty;
           var score = playerRecord.points - playerRecord.penalty;    
           updateRankingDisplay();  
-          appendMessage(playerName + ' has lost a point (' + score + ')');
+          appendMessage(playerName + '<span style="color: red;"> -1</span>');
         }        
       }
     }
@@ -192,7 +193,9 @@ function updateRankingDisplay() {
     var playerRecord = playerRecords[i];
     var name = playerRecord.name;
     var total = playerRecord.points - playerRecord.penalty;
-    html.push('(' + total + ') ' + name);
+    var rank = i + 1;
+    html.push('<b>' + rank + '. </b>');
+    html.push(name + ' (' + total + ')');
     html.push('<br/>');
   }
 
@@ -332,7 +335,7 @@ function closeCell(arrayIndex, value, playerName) {
   var playerRecord = getPlayerRecord(playerName);
 
   var score = playerRecord.points - playerRecord.penalty;
-  appendMessage(playerName + ' has gained a point (' +score + ')');
+  appendMessage(playerName + '<span style="color: green;"> +1</span>');
 
   if (isGameOver()) {                
     // update game state to be over
@@ -354,7 +357,8 @@ function onRightMove(arrayIndex, value) {
 }
 
 function onWrongMove() {  
-  var key = 'penalty_' + window.viewerId;
+   
+  var key = 'penalty_' + window.viewerId; //.replace(/ /g, '*');
 
   var value = get(key);
 
@@ -493,7 +497,8 @@ function getViewerId() {
   var ret = null;
 
   if (window.wave) {
-    ret = wave.getViewer().getId();
+
+    ret = wave.getViewer().getDisplayName();
   }
 
   return ret;
