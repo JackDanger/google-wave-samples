@@ -10,7 +10,7 @@
   <script type="text/javascript"
       src="http://pesta.appspot.com/gadgets/ratings/ratings.js">
   </script>	
-  <p id="rating_star_panel" style="font-size:small;text-align:center;">
+  <p id="rating_panel" style="font-size:small;text-align:center;">
   <b>How do you rate it?</b> <br><br>
   <table border="0" cellspacing="1" cellpadding="2" align="center">
     <tr>
@@ -35,40 +35,40 @@
     <td align="left" style="padding-right:0.5em;padding-bottom:1px;white-space:nowrap;font-size:small;">
       5 star:
     </td>
-    <td id="td5" style="min-width:60;" width="60" align="left" bgcolor="eeeecc" title="">
-      <div id="div5" style="background-color:#FFCC66; height:13px; width:0%;"><span id="five_star_percentage" style="font-size:x-small;"></span></div></td>
+    <td id="td5" style="min-width:60;" width="60" align="left" bgcolor="#E8E8E8" title="">
+      <div id="div5" style="background-color:#FFCC33; height:13px; width:0%;"><span id="five_star_percentage" style="font-size:x-small;"></span></div></td>
     <td align="right">&nbsp;<span id="five_star" style="font-size:small;"></span></td>
   </tr>
   <tr>
     <td align="left" style="padding-right:0.5em;padding-bottom:1px;white-space:nowrap;font-size:small;">
       4 star:
     </td>
-    <td id="td4" style="min-width:60;" width="60" align="left" bgcolor="eeeecc" class="tiny" title="">
-      <div id="div4" style="background-color:#FFCC66; height:13px; width:0%;"><span id="four_star_percentage" style="font-size:x-small;"></span></div></td>
+    <td id="td4" style="min-width:60;" width="60" align="left" bgcolor="#E8E8E8" title="">
+      <div id="div4" style="background-color:#FFCC33; height:13px; width:0%;"><span id="four_star_percentage" style="font-size:x-small;"></span></div></td>
     <td align="right">&nbsp;<span id="four_star" style="font-size:small;"></span></td>
   </tr>
   <tr>
     <td align="left" style="padding-right:0.5em;padding-bottom:1px;white-space:nowrap;font-size:small;">
       3 star:
     </td>
-    <td id="td3" style="min-width:60;" width="60" align="left" bgcolor="eeeecc" class="tiny" title="">
-      <div id="div3" style="background-color:#FFCC66; height:13px; width:0%;"><span id="three_star_percentage" style="font-size:x-small;"></span></div></td>
+    <td id="td3" style="min-width:60;" width="60" align="left" bgcolor="#E8E8E8" title="">
+      <div id="div3" style="background-color:#FFCC33; height:13px; width:0%;"><span id="three_star_percentage" style="font-size:x-small;"></span></div></td>
     <td align="right">&nbsp;<span id="three_star" style="font-size:small;"></span></td>
   </tr>
   <tr>
     <td align="left" style="padding-right:0.5em;padding-bottom:1px;white-space:nowrap;font-size:small;">
       2 star:
     </td>
-    <td id="td2" style="min-width:60;" width="60" align="left" bgcolor="eeeecc" class="tiny" title="">
-      <div id="div2" style="background-color:#FFCC66; height:13px; width:0%;"><span id="two_star_percentage" style="font-size:x-small;"></span></div></td>
+    <td id="td2" style="min-width:60;" width="60" align="left" bgcolor="#E8E8E8" title="">
+      <div id="div2" style="background-color:#FFCC33; height:13px; width:0%;"><span id="two_star_percentage" style="font-size:x-small;"></span></div></td>
     <td align="right">&nbsp;<span id="two_star" style="font-size:small;"></span></td>
   </tr>
   <tr>
     <td align="left" style="padding-right:0.5em;padding-bottom:1px;white-space:nowrap;font-size:small;">
       1 star:
     </td>
-    <td id="td1" style="min-width:60;" width="60" align="left" bgcolor="eeeecc" class="tiny" title="">
-      <div id="div1" style="background-color:#FFCC66; height:13px; width:0%;"><span id="one_star_percentage" style="font-size:x-small;"></span></div></td>
+    <td id="td1" style="min-width:60;" width="60" align="left" bgcolor="#E8E8E8" title="">
+      <div id="div1" style="background-color:#FFCC33; height:13px; width:0%;"><span id="one_star_percentage" style="font-size:x-small;"></span></div></td>
     <td align="right">&nbsp;<span id="one_star" style="font-size:small;"></span></td>
    </tr>
   </table>
