@@ -1,0 +1,11 @@
+application: graphybot
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /public
+  static_dir: public
+
+- url: /_wave/.*
+  script: graphy.py
