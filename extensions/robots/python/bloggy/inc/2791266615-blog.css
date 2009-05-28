@@ -1,0 +1,27 @@
+.backlink-toggle-zippy {
+	PADDING-RIGHT: 11px; BACKGROUND: url(http://www.blogger.com/img/triangle.gif) no-repeat left center; CURSOR: hand; MARGIN-RIGHT: 0.1em
+}
+.expanded-backlink .backlink-toggle-zippy {
+	BACKGROUND-IMAGE: url(http://www.blogger.com/img/triangle_open.gif)
+}
+.collapsed-backlink .collapseable {
+	DISPLAY: none
+}
+.status-msg-wrap {
+	FONT-SIZE: 110%; MARGIN: 10px auto; WIDTH: 90%; POSITION: relative
+}
+.status-msg-border {
+	BORDER-RIGHT: #000000 1px solid; BORDER-TOP: #000000 1px solid; FILTER: alpha(opacity=40); BORDER-LEFT: #000000 1px solid; WIDTH: 100%; BORDER-BOTTOM: #000000 1px solid; POSITION: relative; moz-opacity: .40; opacity: .40
+}
+.status-msg-bg {
+	Z-INDEX: 1; FILTER: alpha(opacity=30); WIDTH: 100%; POSITION: relative; BACKGROUND-COLOR: #cccccc; moz-opacity: .80; opacity: .80
+}
+.status-msg-body {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; Z-INDEX: 4; PADDING-BOTTOM: 0.3em; WIDTH: 100%; PADDING-TOP: 0.3em; POSITION: absolute; TEXT-ALIGN: center
+}
+.status-msg-hidden {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; VISIBILITY: hidden; PADDING-BOTTOM: 0.3em; PADDING-TOP: 0.3em
+}
+.status-msg-wrap A {
+	PADDING-LEFT: 0.4em; TEXT-DECORATION: underline
+}

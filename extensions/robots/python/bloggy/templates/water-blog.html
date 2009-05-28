@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Bloggy Template</title>
+  <link rel="stylesheet" type="text/css" media="screen, projection"
+  href="/inc/water-style.css" />
+  <script type="text/javascript" src="http://wave-api.appspot.com/public/embed.js"></script>
+  
+  
+  <script type="text/javascript">
+    function addComment(button) {
+      var comment_form = document.getElementById('comment_form');
+      var use_google = comment_form['role'][0].checked;
+      var participantId = '';
+      if (!use_google) {
+        participantId = document.getElementById('firstname').value + '.' +
+          document.getElementById('lastname').value + '@temp.gwave.com';
+      }
+      wavePanel.addReply(participantId);
+    }
+
+    function followWave() {
+      wavePanel.addParticipant();
+    }
+
+    function toggleRole(rad) {
+      var choice = rad.value;
+      var anonymousblock = document.getElementById('anonymousblock');
+      if (choice == "google") {
+        anonymousblock.style.display = 'none';
+      } else {
+        anonymousblock.style.display = 'block';
+      }
+    }
+  </script>
+  
+</head>
+<body>
+  <div id="page">
+    <div id="header">
+      <h1>
+        The Adventures of Lars
+      </h1>
+      <p>
+        Where will I go next?
+      </p>
+    </div> <!-- END #header -->
+    <div id="main">
+      <div id="content">
+        <div id="waveframe" style="height:700px;width:100%"></div>
+        <form id="comment_form">
+          <fieldset>
+            <p>
+              Leave a comment as:
+            </p>
+            <label><input type="radio" name="role" value="google" onclick="toggleRole(this)">Google User</label>
+            <label><input type="radio" name="role" value="anonymous" onclick="toggleRole(this)">Anonymous user</label>
+            <div id="anonymousblock" style="display:none">
+              <label>First Name</label>
+              <input id="firstname" name="firstname">
+              <label>Last Name</label>
+              <input id="lastname" name="lastname">
+            </div> <!-- END #anonymousblock -->
+          </fieldset>
+          <fieldset class="submit">
+            <button type="button" onclick="addComment(this)">Add comment</button>
+            <button type="button" onclick="followWave()">Follow this wave</button>
+          </fieldset>
+        </form>
+      </div> <!-- END #content -->
+      <div id="secondaryContent">
+        <div class="panel">
+          <h2>
+            {{name}}
+          </h2>
+          <img src="{{img}}" width="100%">
+          <p>
+            We're on an adventure in Australia for a few years &ndash; this blog is a record of our journey.
+          </p>
+        </div> <!-- END .panel -->
+        <div class="panel">
+          <h2>
+            Blog Archive
+          </h2>
+          <ul id="archiveList">
+            {%for post in posts%}
+						<li>
+						  <a href="{{post.url}}">{{post.title}}</a>
+						</li>
+            {%endfor%}
+          </ul>
+        </div> <!-- END .panel -->
+      </div> <!-- END #secondaryContent -->
+    </div> <!-- END #main -->
+    <div id="footer">
+      Background photo by <a href="http://www.flickr.com/photos/atomicshark/373758050/">atomicshark</a>
+    </div> <!-- END #footer -->
+  </div> <!-- END #page -->
+
+    <script>
+      var wavePanel = new WavePanel('{{server}}');
+      wavePanel.setUIConfig('{{bgcolor}}', '{{color}}', '{{font}}');
+      wavePanel.loadWave('{{waveid}}');
+      wavePanel.init(document.getElementById('waveframe'));
+    </script>
+
+</body>
+
+
+
+
+</html>

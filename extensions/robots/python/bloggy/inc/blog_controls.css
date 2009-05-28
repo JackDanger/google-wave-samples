@@ -1,0 +1,37 @@
+.item-control {
+	DISPLAY: none
+}
+.item-control A {
+	TEXT-DECORATION: none! important
+}
+.item-action A {
+	TEXT-DECORATION: none! important
+}
+.widget-item-control {
+	FLOAT: right
+}
+.icon-action {
+	MARGIN: 0px 0px -5px 0.5em; BORDER-TOP-STYLE: none! important; BORDER-RIGHT-STYLE: none! important; BORDER-LEFT-STYLE: none! important; BORDER-BOTTOM-STYLE: none! important
+}
+.delete-comment-icon {
+	PADDING-RIGHT: 7px; PADDING-LEFT: 7px; BACKGROUND: url(/img/icon_delete13.gif) no-repeat left 50%; PADDING-BOTTOM: 7px; PADDING-TOP: 7px
+}
+
+@media All    
+{
+.BLOG_mobile_video_class {
+	DISPLAY: none
+}
+
+}
+
+@media Handheld    
+{
+.BLOG_mobile_video_class {
+	DISPLAY: inline
+}
+.BLOG_video_class {
+	DISPLAY: none
+}
+
+}

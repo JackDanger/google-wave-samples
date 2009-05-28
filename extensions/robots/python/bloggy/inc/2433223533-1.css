@@ -1,0 +1,42 @@
+#b-navbar {
+	COLOR: #47a; BORDER-BOTTOM: #024 1px solid; BACKGROUND-COLOR: #036
+}
+#b-search TABLE {
+	BACKGROUND: url(corner.gif) #147 no-repeat left bottom
+}
+#b-query {
+	BORDER-RIGHT: #47a 1px solid; BORDER-TOP: #47a 1px solid; BORDER-LEFT: #47a 1px solid; BORDER-BOTTOM: #47a 1px solid
+}
+#b-search A {
+	COLOR: #9cf
+}
+#b-search TD {
+	COLOR: #fff
+}
+#b-search A:hover {
+	COLOR: #fff
+}
+#b-sms A {
+	COLOR: #9cf
+}
+#b-sms A:hover {
+	COLOR: #fff
+}
+#navbar-logo {
+	BACKGROUND-IMAGE: url(logobar.gif); WIDTH: 24px; HEIGHT: 24px
+}
+#b-search-this {
+	BACKGROUND: #114477
+}
+.bt1 {
+	BACKGROUND-COLOR: #4477aa
+}
+.bt2 {
+	BORDER-RIGHT: #4477aa 1px solid; BORDER-LEFT: #4477aa 1px solid; COLOR: #99ccff; BACKGROUND-COLOR: #114477
+}
+DIV.bt2:hover {
+	BACKGROUND-COLOR: #4477aa
+}
+#bt-flag {
+	PADDING-LEFT: 8px; BACKGROUND: url(flag.gif) no-repeat left 50%
+}

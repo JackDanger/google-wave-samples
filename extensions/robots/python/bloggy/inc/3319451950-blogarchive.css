@@ -1,0 +1,48 @@
+#ArchiveList .toggle {
+	CURSOR: pointer; FONT-FAMILY: Arial, sans-serif
+}
+#ArchiveList .toggle-open {
+	FONT-SIZE: 1.7em; LINE-HEIGHT: 0.6em
+}
+#ArchiveList {
+	TEXT-ALIGN: left
+}
+#ArchiveList A.post-count-link {
+	TEXT-DECORATION: none
+}
+#ArchiveList A.post-count-link:link {
+	TEXT-DECORATION: none
+}
+#ArchiveList A.post-count-link:visited {
+	TEXT-DECORATION: none
+}
+#ArchiveList A.toggle {
+	TEXT-DECORATION: none
+}
+#ArchiveList A.toggle:link {
+	TEXT-DECORATION: none
+}
+#ArchiveList A.toggle:visited {
+	TEXT-DECORATION: none
+}
+#ArchiveList A.toggle:hover {
+	TEXT-DECORATION: none
+}
+.BlogArchive #ArchiveList UL LI {
+	BORDER-TOP-WIDTH: 0px; LIST-STYLE: none none outside; PADDING-LEFT: 15px; BORDER-LEFT-WIDTH: 0px; BACKGROUND: none transparent scroll repeat 0% 0%; BORDER-BOTTOM-WIDTH: 0px; MARGIN-LEFT: 0px; TEXT-INDENT: -15px; BORDER-RIGHT-WIDTH: 0px
+}
+.BlogArchive #ArchiveList UL UL LI {
+	PADDING-LEFT: 1.2em
+}
+.BlogArchive #ArchiveList UL {
+	BORDER-TOP-WIDTH: 0px; PADDING-RIGHT: 0px; PADDING-LEFT: 0px; BORDER-LEFT-WIDTH: 0px; LIST-STYLE-IMAGE: none; BORDER-BOTTOM-WIDTH: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px; LIST-STYLE-TYPE: none; BORDER-RIGHT-WIDTH: 0px
+}
+.BlogArchive #ArchiveList UL UL {
+	MARGIN-TOP: 5px
+}
+.BlogArchive #ArchiveList UL.posts LI {
+	PADDING-LEFT: 1.3em
+}
+#ArchiveList .collapsed UL {
+	DISPLAY: none
+}
