@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<w:robot xmlns:w="http://wave.google.com/extensions/robots/1.0">
+  <w:capabilities>
+    <w:capability name="wavelet_participants_changed" content="true" />
+    <w:capability name="document_changed" content="true" />
+    <w:capability name="blip_submitted" content="true" context="parent" />
+  </w:capabilities>
+  <w:crons>
+    <w:cron path="/_wave/robot/fetchupdate" timerinseconds="5" />
+  </w:crons>
+  <w:profile name="Tweety" imageurl="/images/tweety.png" profileurl="/_wave/profile.xml" />
+</w:robot>

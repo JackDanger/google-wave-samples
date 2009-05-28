@@ -1,0 +1,8 @@
+<extension location="NewWaveMenu">
+  <info id="create-twitter-wave"
+        text="New Twave"
+        description="Creates a new Twitter wave."/>
+  <createNewWave>
+    <participant id="tweety-wave@appspot.com"></participant>
+  </createNewWave>
+</extension>
