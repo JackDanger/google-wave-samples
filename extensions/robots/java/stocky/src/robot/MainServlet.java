@@ -2,6 +2,7 @@ package robot;
 
 import com.google.wave.api.Blip;
 import com.google.wave.api.Event;
+import com.google.wave.api.EventType;
 import com.google.wave.api.Wavelet;
 import com.google.wave.api.AbstractRobotServlet;
 import com.google.wave.api.RobotMessageBundle;
@@ -26,27 +27,28 @@ public class MainServlet extends AbstractRobotServlet {
   public void processEvents(RobotMessageBundle robotMessageBundle) {     
     
     Wavelet wavelet = robotMessageBundle.getWavelet();
-    
-    if (robotMessageBundle.wasParticipantAddedToWave(BOT_NAME)) {
+
+    // detect robot self add event    
+    if (robotMessageBundle.wasSelfAdded()) {
       wavelet.setTitle(INSTRUCTION);
-    }         
+    } else {
+      for (Event event : robotMessageBundle.getBlipSubmittedEvents()) {
+        Blip blip = event.getBlip();
+        String text = null;
 
-    for (Event event : robotMessageBundle.getBlipSubmittedEvents()) {
-      Blip blip = event.getBlip();
-      String text = null;
+        if (blip.getBlipId().equals(wavelet.getRootBlipId())) {
+          // this is the root blip, use getTitle() to get its content
+          
+        } else {      
+          text = blip.getDocument().getText();
 
-      if (blip.getBlipId().equals(wavelet.getRootBlipId())) {
-	      // this is the root blip, use getTitle() to get its content
-        
-      } else {      
-        text = blip.getDocument().getText();
-
-        String replacement = process(text, blip);
-       
-        blip.getDocument().replace(replacement);
-        //Util.boldenPrice(replacement, blip);
+          String replacement = process(text, blip);
+         
+          blip.getDocument().replace(replacement);
+          //Util.boldenPrice(replacement, blip);
+        }
       }
-    }    
+    }
   }
 
   public String process(String text, Blip blip) {
