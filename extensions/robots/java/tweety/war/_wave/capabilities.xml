@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <w:robot xmlns:w="http://wave.google.com/extensions/robots/1.0">
+  <w:version>1</w:version>
   <w:capabilities>
     <w:capability name="wavelet_participants_changed" content="true" />
     <w:capability name="document_changed" content="true" />
