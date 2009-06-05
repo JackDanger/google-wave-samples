@@ -78,7 +78,7 @@ public class TweetyServlet extends AbstractRobotServlet {
     Blip rootBlip = wavelet.getRootBlip();
 
     // Handle the flow when Tweety was just added to a new wave.
-    if (robotMessageBundle.wasParticipantAddedToNewWave(TWEETY_ID)) {
+    if (robotMessageBundle.wasSelfAdded()) {
       rootBlip.getDocument().setAuthor(TWEETY_ID);
       wavelet.setTitle("Sign into Twitter");
       LoginController loginBlip = new LoginController(wavelet.getRootBlip());
