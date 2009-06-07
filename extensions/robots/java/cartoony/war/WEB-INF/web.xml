@@ -5,11 +5,19 @@
 
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
 	<servlet>
-		<servlet-name>hellowave</servlet-name>
-		<servlet-class>com.google.wave.extensions.hellowave.HelloWaveServlet</servlet-class>
+		<servlet-name>cartoony</servlet-name>
+		<servlet-class>com.google.wave.extensions.cartoony.CartoonyServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>hellowave</servlet-name>
+		<servlet-name>cartoony</servlet-name>
 		<url-pattern>/_wave/robot/jsonrpc</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>profile</servlet-name>
+		<servlet-class>com.google.wave.extensions.cartoony.CartoonyProfileServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>profile</servlet-name>
+		<url-pattern>/_wave/robot/profile</url-pattern>
 	</servlet-mapping>
 </web-app>

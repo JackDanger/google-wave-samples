@@ -1,9 +1,8 @@
 <?xml version="1.0"?>
 <w:robot xmlns:w="http://wave.google.com/extensions/robots/1.0">
+	<w:version>3</w:version>
 	<w:capabilities>
-       <w:capability name="blip_submitted"/>
+	   <w:capability name="blip_submitted"/>
      </w:capabilities>
-     <w:profile name="HelloWave"
-                imageurl="/images/hellowave.png"
-                profileurl="/_wave/profile.xml" />
+     
 </w:robot>

@@ -5,11 +5,11 @@
 
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
 	<servlet>
-		<servlet-name>hellowave</servlet-name>
-		<servlet-class>com.google.wave.extensions.hellowave.HelloWaveServlet</servlet-class>
+		<servlet-name>debuggy</servlet-name>
+		<servlet-class>com.google.wave.extensions.debuggy.DebuggyServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>hellowave</servlet-name>
+		<servlet-name>debuggy</servlet-name>
 		<url-pattern>/_wave/robot/jsonrpc</url-pattern>
 	</servlet-mapping>
 </web-app>

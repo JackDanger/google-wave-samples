@@ -1,10 +1,10 @@
-package com.google.wave.extensions.hellowave;
+package com.google.wave.extensions.debuggy;
 
 import com.google.wave.api.*;
 import java.util.List;
 
 @SuppressWarnings("serial")
-public class HelloWaveServlet extends AbstractRobotServlet {
+public class DebuggyServlet extends AbstractRobotServlet {
 
 	
 	@Override
@@ -50,9 +50,8 @@ public class HelloWaveServlet extends AbstractRobotServlet {
 		
 		String creator = blip.getCreator();
 		
-		if (!creator.equals("rusty@gwave.com")) {
+		if (!creator.equals("debuggybot@appspot.com")) {
 			addLine(textView, "Blip Text", blip.getDocument().getText());
-			//textView.appendStyledText(new StyledText(blip.getDocument().getText(), StyleType.ITALIC));
 		}
 	}
 	

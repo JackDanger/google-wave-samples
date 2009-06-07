@@ -1,32 +1,33 @@
-package com.google.wave.extensions.hellowave;
+package com.google.wave.extensions.cartoony;
 
 import com.google.wave.api.*;
+
 import java.util.List;
 
 @SuppressWarnings("serial")
-public class HelloWaveServlet extends AbstractRobotServlet {
+public class CartoonyServlet extends AbstractRobotServlet {
 
-	
+
 	@Override
-	public void processEvents(RobotMessageBundle events) {
-		Wavelet wavelet = events.getWavelet();
-		
-		Blip rootBlip = events.getEvents().get(0).getBlip();
-		makeCartoonBlip(rootBlip);
+	public void processEvents(RobotMessageBundle robotMessageBundle) {
+		for (Event blipSubmittedEvent : robotMessageBundle.getBlipSubmittedEvents()) {
+	    	makeCartoonBlip(blipSubmittedEvent.getBlip());
+	    }
+	}
+	
+	public void makeDebugBlip(Wavelet wavelet, String text) {
+		TextView textView = wavelet.appendBlip().getDocument();
+		textView.append(text);
 	}
 	
 	public void makeCartoonBlip(Blip blip) {
 		String creator = blip.getCreator();
-		List<String> contributors = blip.getContributors();
-		if (!contributors.contains("rusty@gwave.com")) {
-			
-			String text = blip.getDocument().getText();
-			Image image = new Image();
-			image.setUrl(makeCartoonUrl(text, creator));
-			
-			blip.getDocument().delete();
-			blip.getDocument().appendElement(image);
-		} 
+		String text = blip.getDocument().getText();
+		Image image = new Image();
+		image.setUrl(makeCartoonUrl(text, creator));
+		
+		blip.getDocument().delete();
+		blip.getDocument().appendElement(image);
 	}
 	
 	public String makeCartoonUrl(String text, String creator) {

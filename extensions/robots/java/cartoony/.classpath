@@ -5,6 +5,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/json.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jsonrpc.jar"/>
-	<classpathentry kind="lib" path="C:/Downloads/wave-robot-api.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/wave-robot-api.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

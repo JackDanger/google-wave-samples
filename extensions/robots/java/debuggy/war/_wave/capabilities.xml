@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <w:robot xmlns:w="http://wave.google.com/extensions/robots/1.0">
 	<w:capabilities>
+	   <w:capability name="wavelet_self_added"/>
        <w:capability name="wavelet_participants_changed"/>
        <w:capability name="blip_submitted"/>
        <w:capability name="document_changed"/>
