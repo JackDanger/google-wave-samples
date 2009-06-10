@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
+  <servlet>
+    <servlet-name>robot</servlet-name>
+    <servlet-class>com.google.wave.extensions.polly.PollyServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>robot</servlet-name>
+    <url-pattern>/_wave/robot/jsonrpc</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>profile</servlet-name>
+    <servlet-class>com.google.wave.extensions.polly.PollyProfileServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>profile</servlet-name>
+    <url-pattern>/_wave/robot/profile</url-pattern>
+  </servlet-mapping>
+</web-app>

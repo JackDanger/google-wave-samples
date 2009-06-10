@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<extension location="NewWaveMenu">
+  <info id="create-polly-wave" text="New Poll" description="Creates a poll administration wave."/>
+  <createNewWave>
+    <participant id="polly-wave@appspot.com"></participant>
+  </createNewWave>
+</extension>
