@@ -5,7 +5,6 @@ package com.google.wave.extensions.blogbot;
 import com.google.wave.api.AbstractRobotServlet;
 import com.google.wave.api.Blip;
 import com.google.wave.api.Event;
-import com.google.wave.api.EventType;
 import com.google.wave.api.Range;
 import com.google.wave.api.RobotMessageBundle;
 import com.google.wave.api.TextView;
@@ -137,9 +136,11 @@ public class BlogbotServlet extends AbstractRobotServlet {
     String annotationWriteBack = String.valueOf(Math.random());
     List<String> participants = new ArrayList<String>();
     
-    // Adds the blog owner and robot as participants on the new blog wave.
+    // Adds the blog owner, robot, and all participants of TOC
+    // as participants on the new blog wave.
     participants.add(ROBOT);
     participants.add(wavelet.getCreator());
+    participants.addAll(wavelet.getParticipants());
     Wavelet newWavelet = bundle.createWavelet(participants, annotationWriteBack);
     
     // Sets initial wave information.
