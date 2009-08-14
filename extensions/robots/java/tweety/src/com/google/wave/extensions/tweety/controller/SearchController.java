@@ -1,16 +1,17 @@
 // Copyright 2009 Google Inc. All Rights Reserved.
-package com.google.wave.extensions.twitter.tweety.controller;
+package com.google.wave.extensions.tweety.controller;
 
 import com.google.wave.api.Blip;
 import com.google.wave.api.ElementType;
+import com.google.wave.api.Event;
 import com.google.wave.api.FormElement;
 import com.google.wave.api.StyleType;
 import com.google.wave.api.StyledText;
 import com.google.wave.api.TextView;
-import com.google.wave.extensions.twitter.tweety.TwitterService;
-import com.google.wave.extensions.twitter.tweety.model.Tweet;
-import com.google.wave.extensions.twitter.tweety.model.TwitterWave;
-import com.google.wave.extensions.twitter.tweety.util.Util;
+import com.google.wave.extensions.tweety.TwitterService;
+import com.google.wave.extensions.tweety.model.Tweet;
+import com.google.wave.extensions.tweety.model.TwitterWave;
+import com.google.wave.extensions.tweety.util.Util;
 
 import org.json.JSONException;
 
@@ -33,6 +34,7 @@ import javax.cache.CacheException;
  * </pre>
  *
  * @author mprasetya@google.com (Marcel Prasetya)
+ * @author kimwhite@google.com (Kimberly White)
  */
 public class SearchController implements FetchController {
 
@@ -61,17 +63,31 @@ public class SearchController implements FetchController {
    * The Twitter Wave where this controller resides.
    */
   private TwitterWave twitterWave;
-
+  
+  /**
+   * A list of events received from Google Wave.
+   */
+  private List<Event> events;
+  
+  /**
+   * Helper class to post to and fetch data from Twitter.
+   */
+  private TwitterService twitterService;
+  
   /**
    * Constructs a search controller given a {@link Blip} and a
    * {@link TwitterWave}
    * 
+   * @param service Posts to and fetches data from Twitter.
    * @param blip The blip to render the search form.
    * @param twitterWave The Twitter Wave where this controller resides.
+   * @param events A list of events received from Google Wave.
    */
-  public SearchController(Blip blip, TwitterWave twitterWave) {
+  public SearchController(TwitterService service, Blip blip, TwitterWave twitterWave, List<Event> events) {
+   twitterService = service;
    this.blip = blip;
    this.twitterWave = twitterWave;
+   this.events = events;
   }
 
   @Override
@@ -80,11 +96,15 @@ public class SearchController implements FetchController {
     TextView document = blip.getDocument();
     document.delete();
 
+    // TODO: Decide if want to use former code and, if so, how to get username.
+//    // Former code:
+//    String username = twitterWave.getUsername();
+//    blip.getWavelet().setTitle(
+//        new StyledText((username + (username.endsWith("s") ? "'" : "'s") + " Twitter Search"),
+//            StyleType.HEADING3));
+    
     // Set the new title.
-    String username = twitterWave.getUsername();
-    blip.getWavelet().setTitle(
-        new StyledText((username + (username.endsWith("s") ? "'" : "'s") + " Twitter Search"),
-            StyleType.HEADING3));
+    blip.getWavelet().setTitle(new StyledText("Twitter Search", StyleType.HEADING3));
 
     // Insert the search input box.
     document.append("\n");
@@ -103,7 +123,7 @@ public class SearchController implements FetchController {
 
   @Override
   public boolean isButtonClicked() {
-    return Util.isButtonClicked(blip, SEARCH_BUTTON_ID);
+    return Util.isButtonClicked(events, SEARCH_BUTTON_ID);
   }
 
   @Override
@@ -115,9 +135,7 @@ public class SearchController implements FetchController {
     }
 
     // Handle search mode.
-    List<Tweet> tweets = TwitterService.search(
-        twitterWave.getUsername(),
-        twitterWave.getPassword(),
+    List<Tweet> tweets = twitterService.search(
         twitterWave.getSearchQuery(),
         twitterWave.getLatestTweetId(),
         twitterWave.getWaveId());

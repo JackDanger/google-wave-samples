@@ -1,5 +1,5 @@
 // Copyright 2009 Google Inc. All Rights Reserved.
-package com.google.wave.extensions.twitter.tweety;
+package com.google.wave.extensions.tweety;
 
 import com.google.wave.api.ParticipantProfile;
 import com.google.wave.api.ProfileServlet;
@@ -53,7 +53,8 @@ public class TweetyProfileServlet extends ProfileServlet {
   @Override
   public ParticipantProfile getCustomProfile(String name) {
     try {
-      return TwitterService.getProfile(name);
+      TwitterService twitterService = new TwitterService();
+      return twitterService.getProfile(name);
     } catch (IOException e) {
       LOG.warning("Problem retrieving profile for user " + name + " from Twitter. Cause: " +
           e.getMessage());

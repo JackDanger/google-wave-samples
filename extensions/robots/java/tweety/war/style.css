@@ -1,0 +1,39 @@
+/**
+ * Copyright 2009 Google Inc.  All Rights Reserved.
+ *
+ * Style for the OAuth callback page (after successful login).
+ *
+ * Author: elizabethford@google.com (Elizabeth Ford)
+ */
+
+body {
+  background:#d8dce0 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABMCAIAAAAjsUpsAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAEVJREFUeNqMTlsKACAMku5/Z9sL1lpUH6JMJ4LkAGBQTdVxIwUQXVizNK+zd1Tecjfv1RHbnE/bcmPrKL8/XYufG6cAAwBFymotT/a6tQAAAABJRU5ErkJggg==') repeat-x;
+  color: #000;
+  font-family: "sans-serif";
+  margin: 1em;
+}
+
+#wrapper {
+  background: url('bg.png') no-repeat;
+  height: 350px;
+  margin: 1em auto;
+  padding: 2em 1em 1em 1em;
+  width: 600px;
+ }
+
+#wrapper img {
+  float: left;
+  height: 50%;
+  padding: 1em;
+}
+
+h1 {
+  font-size: 2em;
+  margin-left: -1em;
+}
+
+p {
+  font-size: 1em;
+  font-weight: normal;
+  width: 500px;
+}

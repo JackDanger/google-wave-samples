@@ -1,7 +1,7 @@
 // Copyright 2009 Google Inc. All Rights Reserved.
-package com.google.wave.extensions.twitter.tweety.controller;
+package com.google.wave.extensions.tweety.controller;
 
-import com.google.wave.extensions.twitter.tweety.model.Tweet;
+import com.google.wave.extensions.tweety.model.Tweet;
 
 import org.json.JSONException;
 

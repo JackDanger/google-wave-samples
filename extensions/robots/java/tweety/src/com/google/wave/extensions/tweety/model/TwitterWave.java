@@ -1,23 +1,22 @@
 // Copyright 2009 Google Inc. All Rights Reserved.
-package com.google.wave.extensions.twitter.tweety.model;
-
-import com.google.wave.extensions.twitter.tweety.util.Util;
+package com.google.wave.extensions.tweety.model;
 
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
-import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 /**
  * Model object that represents a Twitter Wave. It holds metadata such as the
- * wave id, wavelet id, Twitter username that is logged in for this wave, and
- * whether this wave is in Twitter Search mode or normal Timeline mode.
+ * wave id, wavelet id, the wavelet creator, and whether this wave is in 
+ * Twitter Search mode or normal Timeline mode.
  *
  * @author mprasetya@google.com (Marcel Prasetya)
+ * @author kimwhite@google.com (Kimberly White)
  */
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class TwitterWave {
@@ -36,6 +35,12 @@ public class TwitterWave {
   private String waveId;
 
   /**
+   * The id of the wavelet creator.
+   */
+  @Persistent
+  private String creator;
+  
+  /**
    * The wavelet id where the robot resides as a participant.
    */
   @Persistent
@@ -47,18 +52,6 @@ public class TwitterWave {
    */
   @Persistent
   private String latestTweetId;
-
-  /**
-   * The Twitter username that we use to fetch data from Twitter.
-   */
-  @Persistent
-  private String username;
-
-  /**
-   * The Twitter password that we use to authenticate with Twitter.
-   */
-  @Persistent
-  private String password;
 
   /**
    * The search term that we use to query Twitter when in search mode. This will
@@ -78,15 +71,18 @@ public class TwitterWave {
    * Helper method to fetch a {@link TwitterWave} object from the data store
    * for the given Wave.
    *
+   * @param manager The persistence manager used to fetch a TwitterWave object.
    * @param waveId The wave id.
    * @param waveletId The wavelet id.
+   * @param waveletCreator The wavelet creator id.
    * @return The {@link TwitterWave} object associated with the given Wave.
    */
   @SuppressWarnings("unchecked")
   public static TwitterWave getTwitterWave(
       PersistenceManager manager,
       String waveId,
-      String waveletId) {
+      String waveletId,
+      String waveletCreator) {
     Query query = manager.newQuery(TwitterWave.class);
     query.setFilter("waveId == waveIdParam");
     query.declareParameters("String waveIdParam");
@@ -97,7 +93,7 @@ public class TwitterWave {
       return twitterWaves.get(0);
     }
 
-    return new TwitterWave(waveId, waveletId, null);
+    return new TwitterWave(waveId, waveletId, null, waveletCreator);
   }
 
   /**
@@ -107,9 +103,11 @@ public class TwitterWave {
    * @param waveletId The wavelet id.
    * @param latestTweetId The id of the latest tweet that was submitted from the
    *     given wave.
+   * @param waveletCreator The wavelet creator id.
    */
-  public TwitterWave(String waveId, String waveletId, String latestTweetId) {
+  public TwitterWave(String waveId, String waveletId, String latestTweetId, String waveletCreator) {
     setWaveId(waveId);
+    this.creator = waveletCreator;
     this.waveletId = waveletId;
     this.latestTweetId = latestTweetId;
   }
@@ -170,46 +168,6 @@ public class TwitterWave {
   }
 
   /**
-   * Returns the username of the Twitter user that is associated with this
-   * Twitter Wave.
-   *
-   * @return The Twitter username of this Twitter Wave.
-   */
-  public String getUsername() {
-    return username;
-  }
-
-  /**
-   * Sets the username of the Twitter user that is associated with this Twitter
-   * Wave.
-   *
-   * @param username The Twitter username.
-   */
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  /**
-   * Returns the password of the Twitter user that is associated with this
-   * Twitter Wave.
-   *
-   * @return The Twitter password that is associated with this Twitter Wave.
-   */
-  public String getPassword() {
-    return password;
-  }
-
-  /**
-   * Sets the password of the Twitter user that is associated with this Twitter
-   * Wave.
-   *
-   * @param password The Twitter password.
-   */
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  /**
    * Returns the search term that is associated with this Twitter Wave, if this
    * Twitter Wave is in search mode.
    *
@@ -249,14 +207,13 @@ public class TwitterWave {
   public void setInSearchMode(boolean inSearchMode) {
     this.inSearchMode = inSearchMode;
   }
-  
+
   /**
-   * Returns true if this Twitter Wave is logged in to Twitter, that is,
-   * it has valid username and password.
+   * Returns the wavelet creator id.
    * 
-   * @return true If this Twitter Wave is logged in.
+   * @return the wavelet creator.
    */
-  public boolean isLoggedIn() {
-    return !Util.isEmpty(username) && !Util.isEmpty(password);
+  public String getCreator() {
+    return creator;
   }
 }

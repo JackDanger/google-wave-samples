@@ -1,8 +1,10 @@
 // Copyright 2009 Google Inc. All Rights Reserved.
-package com.google.wave.extensions.twitter.tweety.util;
+package com.google.wave.extensions.tweety.util;
 
-import com.google.wave.api.Blip;
-import com.google.wave.api.FormElement;
+import com.google.wave.api.Event;
+import com.google.wave.api.EventType;
+
+import java.util.List;
 
 /**
  * Utility class.
@@ -27,16 +29,15 @@ public class Util {
    * reset the state of the button to be "unclicked" at the end of the method
    * call.
    * 
-   * @param blip The blip where the button resides.
+   * @param events A list of events received from Google Wave that needs to be
+   *     checked whether it contains form button clicked event or not.
    * @param buttonId The id of the button that we want to check.
    * @return true If the user just clicked on the button.
    */
-  public static boolean isButtonClicked(Blip blip, String buttonId) {
-    if (blip != null && blip.getDocument().getElements() != null) {
-      FormElement button = blip.getDocument().getFormView().getFormElement(buttonId);
-      if (button != null && "clicked".equals(button.getValue())) {
-        button.setValue(button.getDefaultValue());
-        blip.getDocument().getFormView().replace(button);
+  public static boolean isButtonClicked(List<Event> events, String buttonId) {
+    for (Event event : events) {
+      if (event.getType() == EventType.FORM_BUTTON_CLICKED &&
+          buttonId.equals(event.getButtonName())) {
         return true;
       }
     }

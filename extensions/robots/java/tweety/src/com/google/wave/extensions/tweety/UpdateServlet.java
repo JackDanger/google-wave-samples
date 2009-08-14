@@ -1,17 +1,17 @@
 // Copyright 2009 Google Inc. All Rights Reserved.
-package com.google.wave.extensions.twitter.tweety;
+package com.google.wave.extensions.tweety;
 
 import com.google.appengine.api.datastore.DatastoreTimeoutException;
 import com.google.wave.api.RobotMessageBundle;
 import com.google.wave.api.Wavelet;
-import com.google.wave.extensions.twitter.tweety.controller.FetchController;
-import com.google.wave.extensions.twitter.tweety.controller.SearchController;
-import com.google.wave.extensions.twitter.tweety.controller.TimelineController;
-import com.google.wave.extensions.twitter.tweety.model.Tweet;
-import com.google.wave.extensions.twitter.tweety.model.TwitterWave;
-import com.google.wave.extensions.twitter.tweety.util.PersistenceManagerHelper;
-import com.google.wave.extensions.twitter.tweety.util.Util;
-import com.google.wave.extensions.twitter.tweety.util.WaveSubmittedTweetsCache;
+import com.google.wave.api.oauth.impl.SingletonPersistenceManagerFactory;
+import com.google.wave.extensions.tweety.controller.FetchController;
+import com.google.wave.extensions.tweety.controller.SearchController;
+import com.google.wave.extensions.tweety.controller.TimelineController;
+import com.google.wave.extensions.tweety.model.Tweet;
+import com.google.wave.extensions.tweety.model.TwitterWave;
+import com.google.wave.extensions.tweety.util.Util;
+import com.google.wave.extensions.tweety.util.WaveSubmittedTweetsCache;
 
 import org.json.JSONException;
 
@@ -29,22 +29,34 @@ import javax.jdo.PersistenceManager;
  * {@code capabilities.xml}.
  *
  * @author mprasetya@google.com (Marcel Prasetya)
+ * @author kimwhite@google.com (Kimberly White)
  */
 public class UpdateServlet extends TweetyServlet {
 
   private static final Logger LOG = Logger.getLogger(UpdateServlet.class.getName());
-
+  
+  /**
+   * Helper class to post and fetch data to and from Twitter.
+   */
+  private TwitterService twitterService;
+  
   @SuppressWarnings("unchecked")
   @Override
   public void processEvents(RobotMessageBundle robotMessageBundle) {
+    
     int attempt = 0;
     while (attempt++ < 3) {
       try {
-        PersistenceManager pm = PersistenceManagerHelper.getPersistenceManager();
+        PersistenceManager pm = SingletonPersistenceManagerFactory.get().getPersistenceManager();
         List<TwitterWave> twitterWaves =
             (List<TwitterWave>) pm.newQuery(TwitterWave.class).execute();
         for (TwitterWave twitterWave : twitterWaves) {
-          if (twitterWave.isLoggedIn()) {
+          
+          // Construct an oauthService with the user key and Twitter OAuth info.
+          String authUserId = twitterWave.getCreator() + "@" + twitterWave.getWaveId();
+          TwitterService twitterService = new TwitterService(authUserId, getRobotAddress());
+          
+          if (twitterService.hasAuthorization()) {
             fetchTweetsForWave(robotMessageBundle, twitterWave);
           }
           pm.makePersistent(twitterWave);
@@ -70,8 +82,10 @@ public class UpdateServlet extends TweetyServlet {
         twitterWave.getWaveletId());
 
     FetchController controller = twitterWave.isInSearchMode() ?
-        new SearchController(wavelet.getRootBlip(), twitterWave):
-        new TimelineController(wavelet.getRootBlip(), twitterWave);
+        new SearchController(twitterService, wavelet.getRootBlip(), 
+            twitterWave, robotMessageBundle.getEvents()):
+        new TimelineController(twitterService, wavelet.getRootBlip(), 
+            twitterWave, robotMessageBundle.getEvents());
 
     try {
       // Fetch new tweets from Twitter.

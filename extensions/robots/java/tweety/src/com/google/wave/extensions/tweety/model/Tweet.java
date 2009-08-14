@@ -1,5 +1,5 @@
 // Copyright 2009 Google Inc. All Rights Reserved.
-package com.google.wave.extensions.twitter.tweety.model;
+package com.google.wave.extensions.tweety.model;
 
 /**
  * Model object that represents a Twitter tweet.

@@ -6,29 +6,34 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
   <servlet>
     <servlet-name>update</servlet-name>
-    <servlet-class>com.google.wave.extensions.twitter.tweety.UpdateServlet</servlet-class>
+    <servlet-class>com.google.wave.extensions.tweety.UpdateServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>update</servlet-name>
     <url-pattern>/_wave/robot/fetchupdate</url-pattern>
   </servlet-mapping>
-
   <servlet>
     <servlet-name>tweety</servlet-name>
-    <servlet-class>com.google.wave.extensions.twitter.tweety.TweetyServlet</servlet-class>
+    <servlet-class>com.google.wave.extensions.tweety.TweetyServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>tweety</servlet-name>
     <url-pattern>/_wave/robot/jsonrpc</url-pattern>
   </servlet-mapping>
-  
   <servlet>
     <servlet-name>profile</servlet-name>
-    <servlet-class>com.google.wave.extensions.twitter.tweety.TweetyProfileServlet</servlet-class>
+    <servlet-class>com.google.wave.extensions.tweety.TweetyProfileServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>profile</servlet-name>
     <url-pattern>/_wave/robot/profile</url-pattern>
   </servlet-mapping>
-  
+  <servlet>
+   <servlet-name>popupGadget</servlet-name>
+   <jsp-file>/popup.jsp</jsp-file>
+ </servlet>
+ <servlet-mapping>
+   <servlet-name>popupGadget</servlet-name>
+   <url-pattern>/popup.xml</url-pattern>
+ </servlet-mapping>
 </web-app>

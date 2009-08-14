@@ -1,5 +1,5 @@
 // Copyright 2009 Google Inc. All Rights Reserved.
-package com.google.wave.extensions.twitter.tweety.util;
+package com.google.wave.extensions.tweety.util;
 
 import java.util.Collections;
 import java.util.SortedSet;
