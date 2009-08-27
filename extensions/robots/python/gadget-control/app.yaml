@@ -1,0 +1,13 @@
+application: your-app-name
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /_wave/.*
+  script: gadget_control.py
+- url: /assets
+  static_dir: assets
+- url: /images
+  static_dir: images
+
