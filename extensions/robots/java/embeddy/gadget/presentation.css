@@ -1,0 +1,108 @@
+fieldset, pre, .dimensions, .colors, .font { border: 1px solid #bcf }
+
+fieldset, table, select { font-size: 13px }
+
+fieldset { margin: 1ex 0 }
+
+legend, #title { font-weight: bold }
+
+legend { color: #36f }
+
+table {
+  width: 100%;
+  border-spacing: 0
+}
+
+td { padding: 0.5ex 0.3em }
+
+pre, .dimensions, .font { background-color: #eee }
+
+pre, code {
+  font-size: 0.9em;
+  color: #060
+}
+
+pre {
+  margin: 0;
+  padding: 0.1ex 0.3em
+}
+
+p { margin-bottom: 0.5ex }
+
+var { color: #600 }
+
+select, .default { color: #bbb }
+
+select { font-family: Arial, sans-serif }
+
+option { color: black }
+
+.dimensions { width: 61px }
+
+.colors { width: 76px }
+
+.font { width: 124px }
+
+.white { background-color: white }
+
+.silver { background-color: silver }
+
+.red { background-color: red }
+
+.yellow { background-color: yellow }
+
+.lime { background-color: lime }
+
+.blue { background-color: blue }
+
+.aqua { background-color: aqua }
+
+.fuchsia { background-color: fuchsia }
+
+.gray, .black, .maroon, .olive, .green, .navy, .teal, .purple { color: white }
+
+.gray { background-color: gray }
+
+.black { background-color: black }
+
+.black.default { color: #888 }
+
+.maroon { background-color: maroon }
+
+.olive { background-color: olive }
+
+.green { background-color: green }
+
+.navy { background-color: navy }
+
+.teal { background-color: teal }
+
+.purple { background-color: purple }
+
+.arial { font: 13px Arial, sans-serif }
+
+.arial-black { font: 11px 'Arial Black', sans-serif }
+
+.comic { font: 11px 'Comic Sans MS', cursive }
+
+.courier { font: 13px 'Courier New', monospace }
+
+.georgia { font: 13px Georgia, serif }
+
+.impact { font: 12px Impact, sans-serif }
+
+.times { font: 12px 'Times New Roman', serif }
+
+.trebuchet { font: 11px 'Trebuchet MS', sans-serif }
+
+.verdana { font: 12px Verdana, sans-serif }
+
+#titlebar {
+  border: 1px solid #fc3;
+  background-color: #ffc;
+  padding: 0.5ex 0.4em
+}
+
+#buttons { text-align: right }
+
+#buttons input[type=image] { cursor: pointer }

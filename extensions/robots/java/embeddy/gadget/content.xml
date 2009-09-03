@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+  <ModulePrefs
+    title="Embeddy"
+    title_url="http://embeddy.appspot.com/"
+    description="Generates code to embed a wave in your webpage."
+    author="Brian Kennish"
+    author_email="byoogle@google.com"
+    screenshot="http://embeddy.appspot.com/gadget/screenshot.png"
+    thumbnail="http://embeddy.appspot.com/gadget/thumbnail.png"
+    height="420">
+    <Require feature="rpc" />
+    <Require feature="wave-preview" />
+  </ModulePrefs>
+  <Content type="html">
+    <![CDATA[
+      <link
+        rel="stylesheet"
+        type="text/css"
+        href="http://embeddy.appspot.com/gadget/presentation.css"
+      />
+      <script
+        type="text/javascript"
+        src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js">
+      </script>
+      <script
+        type="text/javascript"
+        src="http://embeddy.appspot.com/gadget/behavior.js">
+      </script>
+      <form id="io" method="post" action="">
+        <table id="titlebar">
+          <tr>
+            <td id="title">Embeddy</td>
+            <td id="buttons">
+              <input
+                type="image"
+                id="close"
+                src="http://embeddy.appspot.com/gadget/close.gif"
+                alt="Not implemented yet. Delete blip instead."
+                tabindex="7"
+              />
+            </td>
+          </tr>
+        </table>
+        <fieldset>
+          <legend>Options</legend>
+          <table>
+            <tr>
+              <td>Width:</td>
+              <td>
+                <select class="dimensions" name="width-defined" tabindex="1">
+                  <option value="80px">80</option>
+                  <option value="160px">160</option>
+                  <option value="240px">240</option>
+                  <option value="320px">320</option>
+                  <option value="400px">400</option>
+                  <option value="480px">480</option>
+                  <option class="default" value="560px" selected="selected">
+                    560
+                  </option>
+                  <option value="640px">640</option>
+                  <option value="720px">720</option>
+                  <option value="800px">800</option>
+                  <option value="880px">880</option>
+                  <option value="960px">960</option>
+                  <option value="1040px">1040</option>
+                  <option value="1120px">1120</option>
+                  <option value="1200px">1200</option>
+                </select>
+              </td>
+              <td>Background color:</td>
+              <td>
+                <select class="colors" name="background-defined" tabindex="3">
+                  <option
+                    class="white default"
+                    value="'white'"
+                    selected="selected">
+                    white
+                  </option>
+                  <option class="silver" value="'silver'">silver</option>
+                  <option class="red" value="'red'">red</option>
+                  <option class="yellow" value="'yellow'">yellow</option>
+                  <option class="lime" value="'lime'">lime</option>
+                  <option class="blue" value="'blue'">blue</option>
+                  <option class="aqua" value="'aqua'">aqua</option>
+                  <option class="fuchsia" value="'fuchsia'">fuchsia</option>
+                  <option class="gray" value="'gray'">gray</option>
+                  <option class="black" value="'black'">black</option>
+                  <option class="maroon" value="'maroon'">maroon</option>
+                  <option class="olive" value="'olive'">olive</option>
+                  <option class="green" value="'green'">green</option>
+                  <option class="navy" value="'navy'">navy</option>
+                  <option class="teal" value="'teal'">teal</option>
+                  <option class="purple" value="'purple'">purple</option>
+                </select>
+              </td>
+              <td>Font face:</td>
+              <td>
+                <select class="font" name="face-defined" tabindex="5">
+                  <option
+                    class="arial default"
+                    value="'Arial'"
+                    selected="selected">
+                    Arial
+                  </option>
+                  <option class="arial-black" value="'Arial Black'">
+                    Arial Black
+                  </option>
+                  <option class="comic" value="'Comic Sans MS'">
+                    Comic Sans MS
+                  </option>
+                  <option class="courier" value="'Courier New'">
+                    Courier New
+                  </option>
+                  <option class="georgia" value="'Georgia'">Georgia</option>
+                  <option class="impact" value="'Impact'">Impact</option>
+                  <option class="times" value="'Times New Roman'">
+                    Times New Roman
+                  </option>
+                  <option class="trebuchet" value="'Trebuchet MS'">
+                    Trebuchet MS
+                  </option>
+                  <option class="verdana" value="'Verdana'">Verdana</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td>Height:</td>
+              <td>
+                <select class="dimensions" name="height-defined" tabindex="2">
+                  <option value="60px">60</option>
+                  <option value="120px">120</option>
+                  <option value="180px">180</option>
+                  <option value="240px">240</option>
+                  <option value="300px">300</option>
+                  <option value="360px">360</option>
+                  <option class="default" value="420px" selected="selected">
+                    420
+                  </option>
+                  <option value="480px">480</option>
+                  <option value="540px">540</option>
+                  <option value="600px">600</option>
+                  <option value="660px">660</option>
+                  <option value="720px">720</option>
+                  <option value="780px">780</option>
+                  <option value="840px">840</option>
+                  <option value="900px">900</option>
+                </select>
+              </td>
+              <td>Text color:</td>
+              <td>
+                <select
+                  class="colors black default"
+                  name="text-defined"
+                  tabindex="4">
+                  <option class="white" value="'white'">white</option>
+                  <option class="silver" value="'silver'">silver</option>
+                  <option class="red" value="'red'">red</option>
+                  <option class="yellow" value="'yellow'">yellow</option>
+                  <option class="lime" value="'lime'">lime</option>
+                  <option class="blue" value="'blue'">blue</option>
+                  <option class="aqua" value="'aqua'">aqua</option>
+                  <option class="fuchsia" value="'fuchsia'">fuchsia</option>
+                  <option class="gray" value="'gray'">gray</option>
+                  <option
+                    class="black default"
+                    value="'black'"
+                    selected="selected">
+                    black
+                  </option>
+                  <option class="maroon" value="'maroon'">maroon</option>
+                  <option class="olive" value="'olive'">olive</option>
+                  <option class="green" value="'green'">green</option>
+                  <option class="navy" value="'navy'">navy</option>
+                  <option class="teal" value="'teal'">teal</option>
+                  <option class="purple" value="'purple'">purple</option>
+                </select>
+              </td>
+              <td>Font size:</td>
+              <td>
+                <select class="font" name="size-defined" tabindex="6">
+                  <option value="'8px'">8</option>
+                  <option value="'9px'">9</option>
+                  <option value="'10px'">10</option>
+                  <option value="'11px'">11</option>
+                  <option value="'12px'">12</option>
+                  <option class="default" value="'13px'" selected="selected">
+                    13
+                  </option>
+                  <option value="'14px'">14</option>
+                  <option value="'15px'">15</option>
+                  <option value="'16px'">16</option>
+                  <option value="'17px'">17</option>
+                  <option value="'18px'">18</option>
+                  <option value="'19px'">19</option>
+                  <option value="'20px'">20</option>
+                  <option value="'21px'">21</option>
+                  <option value="'22px'">22</option>
+                  <option value="'23px'">23</option>
+                  <option value="'24px'">24</option>
+                </select>
+              </td>
+            </tr>
+          </table>
+        </fieldset>
+        <fieldset>
+          <legend>Code</legend>
+          <table>
+            <tr>
+              <td>
+                <p>Paste this snippet wherever you want the wave to show up:</p>
+
+<pre>
+&lt;div id="wave" style="width: <var
+  class="width-evaluated">width</var>; height: <var
+  class="height-evaluated">height</var>">&lt;/div>
+</pre>
+
+                <p>
+                  And this one right before your
+                  <code>&lt;/body></code>
+                  tag:
+                </p>
+
+<pre>
+&lt;script
+  type="text/javascript"
+  src="http://wave-api.appspot.com/public/embed.js">
+&lt;/script>
+&lt;script type="text/javascript">
+  var wave =
+    new WavePanel('https://wave.google.com/a/wavesandbox.com/');
+  wave.setUIConfig(<var class="background-evaluated">bgcolor</var>, <var
+    class="text-evaluated">color</var>, <var
+    class="face-evaluated">font</var>, <var
+    class="size-evaluated">fontsize</var>);
+  wave.loadWave(<var class="id-evaluated">waveId</var>);
+  wave.init(document.getElementById('wave'));
+&lt;/script>
+</pre>
+
+              </td>
+            </tr>
+          </table>
+        </fieldset>
+      </form>
+    ]]>
+  </Content>
+</Module>
