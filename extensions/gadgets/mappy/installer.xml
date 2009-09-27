@@ -1,0 +1,15 @@
+<extension 
+    name="Mappy"
+    thumbnailUrl="http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/gadgets/mappy/thumbnail_mappy.png"
+    description="Collaborate on a map of placemarks, paths, and shapes with other participants. Great for planning events and trips."> 
+  <author name="Google"/> 
+  <menuHook location="NEWWAVEMENU" text="New Mappy Wave"> 
+    <createNewWave> 
+     <insertGadget url="http://wave-api.appspot.com/public/gadgets/areyouin/gadget.xml"/> 
+    </createNewWave> 
+  </menuHook> 
+  <menuHook location="TOOLBAR" text="Add Mappy"
+      iconUrl="http://wave-skynet.appspot.com/public/extensions/extensionInstaller/icon.png"> 
+    <insertGadget url="http://wave-api.appspot.com/public/gadgets/areyouin/gadget.xml"/> 
+  </menuHook> 
+</extension> 
