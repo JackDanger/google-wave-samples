@@ -82,10 +82,10 @@
         if (adminPanel.geometries_[key]) { // already placed, just update
           // update
           // only update if data has changed
+          var geometry = adminPanel.geometries_[key];
           if (JSON.stringify(geometryData) == JSON.stringify(geometry.data)) {
             continue;
           }
-          var geometry = adminPanel.geometries_[key];
           geometry.data = geometryData;
           var geometryName = document.getElementById(key + "name");
           if (geometryName) geometryName.innerHTML = geometry.data.name;
