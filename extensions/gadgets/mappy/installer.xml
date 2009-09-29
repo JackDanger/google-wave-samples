@@ -1,6 +1,6 @@
 <extension 
-    name="Mappy"
-    thumbnailUrl="http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/gadgets/mappy/thumbnail_mappy.png"
+    name="Map Gadget"
+    thumbnailUrl="http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/gadgets/mappy/screenshot_mapgadget.png"
     description="Collaborate on a map of placemarks, paths, and shapes with other participants. Great for planning events and trips."> 
   <author name="Google"/> 
   <menuHook location="TOOLBAR" text="Add Mappy"
