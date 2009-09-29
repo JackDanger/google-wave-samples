@@ -14,6 +14,13 @@
    #message { padding: 5px; }
    #list li { list-style:none; padding:3px; margin-bottom:2px; }
    .mp-button { text-decoration: none; padding: 3px; }
+   .mp-button a { color: #ffffff; }
+   .mp-button a:visited { color: #ffffff; }
+   .mp-button a:hover { color: #ffffff; }
+   .mp-button a:focus { color: #ffffff; }
+   .mp-button a:active { color: #ffffff; }
+   .sidebarview { text-align: left; }
+   .byline { font-size: 10px; }
    #list li:hover { cursor:pointer; cursor:hand; }
    .accordion, .tabs { font-size:12px!important; width:300px; }
    .ui-dialog, .ui-slider { font-size:12px!important; }
@@ -87,10 +94,9 @@
             continue;
           }
           geometry.data = geometryData;
-          var geometryName = document.getElementById(key + "name");
-          if (geometryName) geometryName.innerHTML = geometry.data.name;
-          var geometryDesc = document.getElementById(key + "description");
-          if (geometryDesc) geometryDesc.innerHTML = geometry.data.description;
+          Mappy.updateGeometryField(geometry, "name");
+          Mappy.updateGeometryField(geometry, "description");
+
           if (geometry.data.type == 'point') {
             geometry.overlay.setLatLng(new GLatLng(geometry.data.coordinates[0].lat, geometry.data.coordinates[0].lng));
           } else {
@@ -103,6 +109,13 @@
         } else {
           adminPanel.createGeometry_(key, geometryData);
         }
+      }
+    }
+    for (geometryKey in adminPanel.geometries_) {
+       
+      if (!state.get(geometryKey)) {
+        adminPanel.map_.removeOverlay(adminPanel.geometries_[geometryKey].overlay);
+        adminPanel.geometries_[geometryKey] = null;
       }
     }
   }
@@ -119,6 +132,17 @@ Mappy = function(id) {
   this.shared_bounds_ = null;
   this.createMap_();
 };
+
+Mappy.updateGeometryField = function(geometry, field) {
+  var div = $('#' + Mappy.getIdForGeometryField(geometry, field));
+  if (div) {
+    div.html(geometry.data[field]);
+  }
+  var input = $('#' + Mappy.getIdForGeometryField(geometry, field, '_input'));
+  if (input) {
+    input.val(geometry.data[field]);
+  }
+}
 
 Mappy.prototype.canUserEdit_ = function(userId) {
   return inEditing(); 
@@ -394,10 +418,8 @@ Mappy.prototype.createSidebarEntry_ = function(geometry) {
     geometry.isEditable = false;
     geometry.isEdited = false;
     geometry.hasEnded = true;
-    if (document.getElementById('name_input' + geometry.key)) { 
-      geometry.data.name = document.getElementById('name_input' +geometry.key).value;
-      geometry.data.description = document.getElementById('description_input' + geometry.key).value; 
-    }
+    geometry.data.name = document.getElementById(Mappy.getIdForGeometryField(geometry, 'name', '_input')).value;
+    geometry.data.description = document.getElementById(Mappy.getIdForGeometryField(geometry, 'description', '_input')).value; 
     if (geometry.data.type == 'point') {
       geometry.data.coordinates = [{lat: geometry.overlay.getLatLng().lat(), lng:  geometry.overlay.getLatLng().lng()}];
     } else if (geometry.data.type == 'line' || geometry.data.type == 'poly') {
@@ -450,30 +472,27 @@ Mappy.prototype.createSidebarEntry_ = function(geometry) {
   return div;
 }
 
+Mappy.getIdForGeometryField = function(geometry, field, suffix) {
+  return geometry.key + field + (suffix || '');
+}
+
 Mappy.prototype.createTableRow_ = function(label, value, is_input, geometry) {
-  if (is_input) {
-    var value_input = document.createElement('input');
-    value_input.style.marginBottom = '10px';
-    value_input.type = 'text';
-    value_input.value = value;
-    value_input.id = label.toLowerCase() + '_input' + geometry.key;
-    value_input.onkeyup = function() {
-      geometry.isEdited = true;
-      GEvent.trigger(geometry.sidebar_entry, 'dataedit');
+  var value_input = document.createElement('input');
+  value_input.style.marginBottom = '10px';
+  value_input.type = 'text';
+  value_input.value = value;
+  value_input.id = Mappy.getIdForGeometryField(geometry, label.toLowerCase(), '_input');
+  value_input.onkeyup = function() {
+    geometry.isEdited = true;
+    GEvent.trigger(geometry.sidebar_entry, 'dataedit');
     }
-    value_input.focus();
-    return value_input;
-  } else {
-    var valueSpan = $('<span');
-    valueSpan.id = geometry.key + label.toLowerCase();
-    valueSpan.appendChild(document.createTextNode(value));
-    return valueSpan[0];
-  }
+  value_input.focus();
+  return value_input;
 }
 
 Mappy.prototype.createView_ = function(geometry, parent_div) {
   var me = this;
-  var div = $('<div>').addClass('sidebarview').html('<b>' + geometry.data.name + '</b><br>' + geometry.data.description + '<br>' + '<em>' + 'Created by: ' + geometry.data.userId + '</em>');
+  var div = $('<div>').addClass('sidebarview').html('<b><span id="' + Mappy.getIdForGeometryField(geometry, 'name') + '">' + geometry.data.name + '</span></b><br><span id="' + Mappy.getIdForGeometryField(geometry, 'description') + '">' + geometry.data.description + '</span><br>' + '<em><span class="byline">' + 'Created by: ' + geometry.data.userId + '</span></em>');
   return div[0];
 }
 
@@ -494,31 +513,35 @@ Mappy.prototype.createForm_ = function(geometry, parent_div) {
 
   var delete_button = Mappy.createButton('Delete');
   delete_button.onclick = function() {
-    me.saveData_('delete', geometry.data); 
-    // should do this after delete confirmed
+    me.saveData_(geometry, true); 
     if (geometry.data.type != 'point'){
       geometry.overlay.disableEditing();
     }
     me.map_.removeOverlay(geometry.overlay);
-    me.updateHighlightPoly_();
-    me.dom_.sidebar_div.removeChild(parent_div);
+    GEvent.trigger(parent_div, 'close');
   };
   div.appendChild(delete_button);
 
+/*
   var cancel_button = Mappy.createButton('Cancel');
   cancel_button.onclick = function() {
     me.updateHighlightPoly_();
   };
   div.appendChild(cancel_button); 
+*/
   return div;
 };
 
 Mappy.createButton = function(label) {
- return $('<a href="#">').addClass('mp-button ui-state-default ui-corner-all').html(label)[0];
+ return $('<a href="javascript:void(0)">').addClass('mp-button ui-state-default ui-corner-all').html(label)[0];
 }
 
-Mappy.prototype.saveData_ = function(geometry) {
-  saveState(geometry.key, JSON.stringify(geometry.data));
+Mappy.prototype.saveData_ = function(geometry, deleteIt) {
+  if (deleteIt) {
+    saveState(geometry.key, null);
+  } else {
+    saveState(geometry.key, JSON.stringify(geometry.data));
+  }
 };
 
 Mappy.prototype.createGeometry_ = function(key, data) {
@@ -743,31 +766,22 @@ SharedMapControl.prototype = new GControl();
 
 SharedMapControl.prototype.initialize = function(map) {
   this.map_ = map;
-  var map_img = document.createElement('img');
-  map_img.width = "60";
-  map_img.height = "60";
-  map_img.style.display = "none";
-  map_img.style.cursor = "pointer";
-  map_img.style.border = "2px solid #77D5F7";
-  map_img.title = "Return to shared map view.";
-  this.map_img_ = map_img;
-  map.getContainer().appendChild(map_img);
-  return map_img;
+  this.button = Mappy.createButton('Return to shared view');
+  map.getContainer().appendChild(this.button);
+  return this.button;
 }
 
 SharedMapControl.prototype.updateMap = function(center, zoom) {
   var me = this;
-  this.map_img_.style.display = "block";
-  var url = "http://maps.google.com/maps/api/staticmap?center=" + center.toUrlValue(6) + "&zoom=" + zoom + "&size=100x100&key=" + key + "&sensor=false";
-  this.map_img_.src = url;
-  this.map_img_.onclick = function() {
+  me.button.style.display = 'block';
+  this.button.onclick = function() {
     me.map_.setCenter(center, zoom);
-    me.map_img.style.display = 'none';
+    me.button.style.display = 'none';
   };
 }
 
 SharedMapControl.prototype.getDefaultPosition = function() {
-  return new GControlPosition(G_ANCHOR_TOP_LEFT, new GSize(12, 150));
+  return new GControlPosition(G_ANCHOR_TOP_LEFT, new GSize(75, 12));
 }
 
   function executeSearch(query) {
@@ -791,7 +805,7 @@ SharedMapControl.prototype.getDefaultPosition = function() {
   function saveState(key, value) {
     var state = wave.getState();
     var delta = {};
-    delta[key] = value + "";
+    delta[key] = value;
     state.submitDelta(delta); 
   }
 
