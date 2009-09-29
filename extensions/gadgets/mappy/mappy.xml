@@ -112,9 +112,10 @@
       }
     }
     for (geometryKey in adminPanel.geometries_) {
-       
-      if (!state.get(geometryKey)) {
-        adminPanel.map_.removeOverlay(adminPanel.geometries_[geometryKey].overlay);
+      var geometry = adminPanel.geometries_[geometryKey]; 
+      if (!state.get(geometryKey) && geometry.notSavedYet == false) {
+        
+        adminPanel.map_.removeOverlay(geometry.overlay);
         adminPanel.geometries_[geometryKey] = null;
       }
     }
@@ -215,6 +216,7 @@ Mappy.prototype.createMap_ = function() {
     new_geometry_data.type = me.mode_;
     new_geometry_data.userId = wave.getViewer().getDisplayName();
     var new_geometry = me.createGeometry_(null, new_geometry_data, true);
+    new_geometry.notSavedYet = true;
     if (new_geometry.data.type == 'line' || new_geometry.data.type == 'poly') {
       new_geometry.overlay.enableDrawing();
       me.editingNow = true;
@@ -540,6 +542,7 @@ Mappy.prototype.saveData_ = function(geometry, deleteIt) {
   if (deleteIt) {
     saveState(geometry.key, null);
   } else {
+    geometry.notSavedYet = false;
     saveState(geometry.key, JSON.stringify(geometry.data));
   }
 };
@@ -643,6 +646,7 @@ Mappy.prototype.extendMarker_ = function(gs, marker, html, result) {
     new_geometry_data.coordinates.push({lat: marker.getLatLng().lat(), lng: marker.getLatLng().lng()});
     marker.closeInfoWindow();
     var new_geometry = gs.createGeometry_(null, new_geometry_data); 
+    new_geometry.notSavedYet = true;
     GEvent.trigger(new_geometry.sidebar_entry, 'datasave');
   };
 
