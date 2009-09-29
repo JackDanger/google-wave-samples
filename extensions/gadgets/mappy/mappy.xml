@@ -420,8 +420,11 @@ Mappy.prototype.createSidebarEntry_ = function(geometry) {
     geometry.isEditable = false;
     geometry.isEdited = false;
     geometry.hasEnded = true;
-    geometry.data.name = document.getElementById(Mappy.getIdForGeometryField(geometry, 'name', '_input')).value;
-    geometry.data.description = document.getElementById(Mappy.getIdForGeometryField(geometry, 'description', '_input')).value; 
+    if (document.getElementById(Mappy.getIdForGeometryField(geometry, 'name', '_input'))) {
+      // doesnt exist if polyy just created
+      geometry.data.name = document.getElementById(Mappy.getIdForGeometryField(geometry, 'name', '_input')).value;
+      geometry.data.description = document.getElementById(Mappy.getIdForGeometryField(geometry, 'description', '_input')).value; 
+    }
     if (geometry.data.type == 'point') {
       geometry.data.coordinates = [{lat: geometry.overlay.getLatLng().lat(), lng:  geometry.overlay.getLatLng().lng()}];
     } else if (geometry.data.type == 'line' || geometry.data.type == 'poly') {
