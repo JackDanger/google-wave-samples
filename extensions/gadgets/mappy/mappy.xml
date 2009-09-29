@@ -1,0 +1,853 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+  <ModulePrefs title="Mappy" height="410">
+    <Require feature="setprefs" />
+  </ModulePrefs>
+  <UserPref name="selection" default_value="${selection}" datatype="string" />
+  <Content type="html"><![CDATA[
+<head>
+ <link type="text/css" href="http://imagine-it.org/google/wave/jqueryui/css/start/jquery-ui-1.7.2.custom.css" rel="stylesheet" /> 
+ <style type="text/css" media="screen">
+   body { font-size:14px; font-family:Arial, sans serif;}
+   #map { float:left; width:700px; height:500px; margin-top:10px; }
+   #message, #list { position:absolute; }
+   #message { padding: 5px; }
+   #list li { list-style:none; padding:3px; margin-bottom:2px; }
+   .mp-button { text-decoration: none; padding: 3px; }
+   #list li:hover { cursor:pointer; cursor:hand; }
+   .accordion, .tabs { font-size:12px!important; width:300px; }
+   .ui-dialog, .ui-slider { font-size:12px!important; }
+   .icon { float:left; position:absolute; cursor:pointer; cursor:hand; padding:3px; }
+   #dropdown li { list-style:none; margin: 0px; margin-bottom: 3px; padding: 3px; text-align:center; }
+   #dropdown li:hover { cursor:pointer; cursor:hand; }
+   #dropdown {position: absolute; margin-left: 0px; padding-left: 0px;}
+  </style>
+<script src="https://wave-api.appspot.com/public/wave.js" type="text/javascript"></script>
+<script src="http://www.google.com/jsapi?key=ABQIAAAAzr2EBOXUKnm_jVnk0OJI7xSosDVG8KKPE1-m51RBrvYughuyMxQ-i1QfUnH94QxWIa6N4U6MouMmBA" type="text/javascript"></script>
+<script>
+  google.load("maps", "2");
+  google.load("jquery", "1.3");
+  google.load("search", "1");
+</script>
+<script src="http://imagine-it.org/google/wave/jqueryui/js/jquery-ui-1.7.2.custom.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+
+  var adminPanel;
+  var waveMode;
+  var key = "ABQIAAAAzr2EBOXUKnm_jVnk0OJI7xSosDVG8KKPE1-m51RBrvYughuyMxQ-i1QfUnH94QxWIa6N4U6MouMmBA";
+
+  /** Initialises the Gadget, initialises all of the global variables, sets
+   *  the state according to the UserPrefs, adds all of the required panels
+   *  to the map, registers all of the initial even hiandlers.
+   */
+  function initialize() {
+    wave.setStateCallback(receiveState, this);
+    wave.setModeCallback(receiveMode, this);
+  }
+
+  function receiveState(state) {
+    if (!adminPanel) {
+      adminPanel = new Mappy("map_canvas");
+      modeSwitch();
+    } 
+ 
+    var center = JSON.parse(getState('center'));
+    if (center) {
+      adminPanel.sharedCenter_ = new GLatLng(center[0], center[1]);
+      adminPanel.sharedZoom_ = parseInt(JSON.parse(getState('zoom')));
+      if (adminPanel.sharedMapControl_) {
+        adminPanel.sharedMapControl_.updateMap(adminPanel.sharedCenter_, adminPanel.sharedZoom_);
+      } else {
+       if (!inEditing()) {
+        adminPanel.map_.setCenter(adminPanel.sharedCenter_, adminPanel.sharedZoom_);
+       }
+      }
+    }
+
+    var maptypes = {'m': G_NORMAL_MAP, 'k': G_SATELLITE_MAP, 'h': G_HYBRID_MAP, 'p': G_PHYSICAL_MAP};
+    var maptype = getState('maptype');
+    if (maptype) {
+      var maptypeConstant = maptypes[maptype];
+      if (adminPanel.map_.getCurrentMapType() != maptypeConstant) {
+        adminPanel.map_.setMapType(maptypeConstant);
+      }
+    }
+
+    // sync overlays
+    var allKeys = state.getKeys();
+    for (var i = 0; i < allKeys.length; i++) {
+      var key = allKeys[i];
+      if (key.indexOf("overlay") > -1) {
+        var geometryData = JSON.parse(state.get(key));
+        if (adminPanel.geometries_[key]) { // already placed, just update
+          // update
+          // only update if data has changed
+          if (JSON.stringify(geometryData) == JSON.stringify(geometry.data)) {
+            continue;
+          }
+          var geometry = adminPanel.geometries_[key];
+          geometry.data = geometryData;
+          var geometryName = document.getElementById(key + "name");
+          if (geometryName) geometryName.innerHTML = geometry.data.name;
+          var geometryDesc = document.getElementById(key + "description");
+          if (geometryDesc) geometryDesc.innerHTML = geometry.data.description;
+          if (geometry.data.type == 'point') {
+            geometry.overlay.setLatLng(new GLatLng(geometry.data.coordinates[0].lat, geometry.data.coordinates[0].lng));
+          } else {
+            if (!geometry.isEditing) {
+             adminPanel.map_.removeOverlay(geometry.overlay);
+             geometry.overlay = adminPanel.createGeometryOverlay(geometry);            
+             adminPanel.connectOverlayAndMarker(geometry);
+            }
+          }  
+        } else {
+          adminPanel.createGeometry_(key, geometryData);
+        }
+      }
+    }
+  }
+
+
+
+Mappy = function(id) {
+  this.map_ = null;
+  this.dom_ = {
+    mapDiv: $("#" + id),
+    markerDivs: []
+  }
+  this.geometries_ = {};
+  this.shared_bounds_ = null;
+  this.createMap_();
+};
+
+Mappy.prototype.canUserEdit_ = function(userId) {
+  return inEditing(); 
+}
+
+Mappy.prototype.isUserLoggedIn_ = function() {
+  return inEditing();
+}
+
+Mappy.getIconHTML = function(type) {
+    switch (type) {
+     case "plus"   : iconClass = 'ui-icon-circle-plus'; break;
+     case "minus"  : iconClass = 'ui-icon-circle-minus'; break;
+     case "close" : iconClass = 'ui-icon-closethick'; break;
+    }
+    return '<div class="icon ui-state-default ui-corner-all"><span class="ui-icon '+iconClass+'" /></div>';
+}
+
+Mappy.prototype.createMap_ = function() {
+  var me = this;
+
+  this.map_ = new GMap2(this.dom_.mapDiv[0], {googleBarOptions:
+  {showOnLoad: true, onGenerateMarkerHtmlCallback : function(marker, html, result) {
+    return me.extendMarker_(me, marker, html, result);}}});
+  this.map_.setCenter(new GLatLng(37, -122));
+  
+  $("#dropdown").appendTo(this.dom_.mapDiv).css({ top: '30px', left: '12px' }).show();
+
+  $(Mappy.getIconHTML("plus"))
+          .css({ top:'12px', left:'12px' })
+          .click(function(){
+            me.map_.zoomIn();
+          })
+          .appendTo(this.dom_.mapDiv);
+
+  $(Mappy.getIconHTML("minus"))
+          .css({ top:'12px', left:'45px' })
+          .click(function(){
+            me.map_.zoomOut();
+          })
+          .appendTo(this.dom_.mapDiv);
+  if (inEditing()) {
+    this.map_.enableGoogleBar();
+  } else {
+    this.map_.disableGoogleBar();
+  }
+
+  // Create a base icon for all of our markers that specifies the
+  // shadow, icon dimensions, etc.
+  var icon = new GIcon(G_DEFAULT_ICON);
+  icon.image = 'http://chart.apis.google.com/chart?cht=mm&chs=32x32&chco=77D5F7,0078AE,77D5F7&ext=.png';
+  icon.iconSize = new GSize(32, 32);
+  icon.shadowSize = new GSize(51, 32);
+  icon.iconAnchor = new GPoint(16, 32);
+  icon.infoWindowAnchor = new GPoint(16, 2);
+  icon.infoShadowAnchor = new GPoint(18, 25);
+  this.icon_ = icon;
+
+  GEvent.addListener(this.map_, 'click', function(overlay, latlng) {
+    if (!inEditing() || me.editingNow) {
+      return;
+    }
+    if (overlay) return;
+    if (me.mode_ == 'view' || !me.mode_) return;
+    new_geometry_data = {};
+    new_geometry_data.name = '';
+    new_geometry_data.description = '';
+    new_geometry_data.coordinates = [];
+    new_geometry_data.coordinates.push({lat: latlng.lat(), lng: latlng.lng()});
+    new_geometry_data.type = me.mode_;
+    new_geometry_data.userId = wave.getViewer().getDisplayName();
+    var new_geometry = me.createGeometry_(null, new_geometry_data, true);
+    if (new_geometry.data.type == 'line' || new_geometry.data.type == 'poly') {
+      new_geometry.overlay.enableDrawing();
+      me.editingNow = true;
+      new_geometry.isEditing = true;
+    } else { 
+      GEvent.trigger(new_geometry.sidebar_entry, 'highlight');
+    }
+  });
+
+  GEvent.addListener(this.map_, 'zoomend', function() {
+    me.updateHighlightPoly_();
+    if (inEditing()) {
+      var state = wave.getState();
+      state.submitDelta({'center': JSON.stringify([me.map_.getCenter().lat(), me.map_.getCenter().lng()]),
+       'zoom': me.map_.getZoom() + ""});
+    }
+   });
+
+  GEvent.addListener(this.map_, 'dragend', function() {
+    if (inEditing()) {
+      var state = wave.getState();
+      state.submitDelta({'center': JSON.stringify([me.map_.getCenter().lat(), me.map_.getCenter().lng()]),
+       'zoom': me.map_.getZoom() + ""});
+    }
+  });
+  GEvent.addListener(this.map_, 'maptypechanged', function() {
+     if (inEditing()) {
+       var state = wave.getState();
+       state.submitDelta({'maptype': me.map_.getCurrentMapType().getUrlArg()});
+     }
+  });
+
+  GEvent.addListener(this.map_, 'movestart', function() {
+    if (!inEditing()) {
+      if (!me.sharedMapControl_) {
+        me.sharedMapControl_ = new SharedMapControl();
+        me.map_.addControl(me.sharedMapControl_);
+      }
+      me.sharedMapControl_.updateMap(me.sharedCenter_, me.sharedZoom_);
+    }
+  });
+  modeSwitch();
+};
+
+
+Mappy.prototype.removeEditingUI_ = function() {
+  var me = this;
+  if (this.edit_control_) {
+    this.map_.removeControl(this.edit_control_);
+    this.edit_control_ = null;
+  }
+  if (this.status_control_) {
+    this.map_.removeControl(this.status_control_);
+    this.status_control_ = null;
+  }
+  this.map_.disableGoogleBar();
+
+  for (var i = 0; i < me.dom_.markerDivs.length; i++) {
+    GEvent.trigger(me.dom_.markerDivs[i], 'resetview');
+  } 
+}
+
+Mappy.prototype.addEditingUI_ = function() {
+  var me = this;
+  
+  if (this.sharedMapControl_) {
+    me.map_.removeControl(this.sharedMapControl_);
+    this.sharedMapControl_ = null;
+  }
+  this.edit_control_ = new EditControl();
+  this.map_.addControl(this.edit_control_);
+  this.status_control_ = new StatusControl();
+  this.map_.addControl(this.status_control_);
+  edit_control = this.edit_control_;
+  status_control = this.status_control_;
+  this.map_.enableGoogleBar();
+
+    GEvent.addListener(edit_control, 'view', function() {
+    me.mode_ = 'view';
+    status_control.setText('Select geometries by clicking on them.');
+  });
+  GEvent.addListener(edit_control, 'point', function() {
+    me.mode_ = 'point';
+    status_control.setText('Click on the map to create a new marker.');
+  });
+  GEvent.addListener(edit_control, 'line', function() {
+    me.mode_ = 'line';
+    status_control.setText('Click on the map to start creating a new line.');
+  });
+  GEvent.addListener(edit_control, 'poly', function() {
+    me.mode_ = 'poly';
+    status_control.setText('Click on the map to start creating a new filled poly.');
+  });
+  for (var i = 0; i < me.dom_.markerDivs.length; i++) {
+    GEvent.trigger(me.dom_.markerDivs[i], 'enableedit');
+  } 
+}
+
+Mappy.prototype.updateHighlightPoly_ = function() {
+  return;
+  var me = this;
+  if (me.highlightPoly_) { me.map_.removeOverlay(me.highlightPoly_); }
+  if (!me.selected_geometry_) { return; }
+  var mapNormalProj = G_NORMAL_MAP.getProjection();
+  var mapZoom = me.map_.getZoom();
+  if (me.selected_geometry_.data.type == 'point') {
+    var latlng = me.selected_geometry_.overlay.getLatLng();
+    var circle_radius = 20;
+  } else {
+    //if (me.selected_geometry_.isEditable) return;
+    var bounds = me.selected_geometry_.overlay.getBounds();
+    var latlng = bounds.getCenter();
+    var southwest_pixel = mapNormalProj.fromLatLngToPixel(bounds.getSouthWest(), mapZoom);
+    var northeast_pixel = mapNormalProj.fromLatLngToPixel(bounds.getNorthEast(), mapZoom);
+    var circle_radius = Math.floor(Math.abs(southwest_pixel.x - northeast_pixel.x)*.7);
+  }
+
+  var latlngs = [];
+  var center_pixel = mapNormalProj.fromLatLngToPixel(latlng, mapZoom);
+  for (var a = 0; a<(21); a++) {
+    var aRad = 18*a*(Math.PI/180);
+    var pixelX = center_pixel.x + circle_radius * Math.cos(aRad);
+    var pixelY = center_pixel.y + circle_radius * Math.sin(aRad);
+    var polyPixel = new GPoint(pixelX, pixelY);
+    var polyPoint = mapNormalProj.fromPixelToLatLng(polyPixel, mapZoom);
+    latlngs.push(polyPoint);
+  }
+  var color = me.selected_geometry_.isEdited ? '#FF0000' : '#FF8921';
+  me.highlightPoly_ = new GPolygon(latlngs, '#ff0000', 0, 0.0, color, 0.2, {clickable: false});
+  me.map_.addOverlay(me.highlightPoly_);
+
+}
+
+Mappy.getLatLngForGeometry_ = function(geometry) {
+  if (geometry.overlay instanceof GMarker) {
+    return geometry.overlay.getLatLng();
+  } else {
+    return geometry.overlay.getBounds().getCenter();
+  }
+}
+Mappy.stealClick_ = function(e) {
+  if(navigator.userAgent.toLowerCase().indexOf('msie') != -1 && document.all) {
+    window.event.cancelBubble = true;
+    window.event.returnValue = false;
+  } else {
+    //e.preventDefault();
+    e.stopPropagation();
+  }
+}
+
+Mappy.prototype.createSidebarEntry_ = function(geometry) {
+  var me = this;
+  var div = document.createElement('div');
+  div.style.marginBottom = '5px'; 
+  div.style.position = 'absolute';
+  div.style.padding = '5px';
+  div.style.width = '200px';
+    div.className = 'ui-widget-content ui-corner-all';
+    var closeButton = $(Mappy.getIconHTML("close"))
+      .click(function() {
+       GEvent.trigger(div, 'close')
+      })
+      .css({ top:'5px', right:'5px' })
+      .uiHover();
+     $(div).append(closeButton);
+  var innerDiv = $('<div>');
+  $(div).append(innerDiv);
+
+ var stealEvents = ['mousedown', 'dblclick', 'DOMMouseScroll'];
+  for( i=0; i < stealEvents.length; i++ ){
+    GEvent.bindDom(div, stealEvents[i], this, Mappy.stealClick_);
+  }
+  GEvent.addListener(div, 'close', function() {
+    $(div).fadeOut();
+  });
+
+  GEvent.addListener(div, 'highlight', function() {
+    this.latlng_ = Mappy.getLatLngForGeometry_(geometry);
+
+    var bounds = me.map_.getBounds();
+    var markerOffset = me.map_.fromLatLngToDivPixel(this.latlng_);
+    var bottomPoint = me.map_.fromDivPixelToLatLng(new GPoint(markerOffset.x + 150, markerOffset.y + 70));
+    if (!bounds.contains(bottomPoint)) {
+      me.map_.panTo(this.latlng_);
+    }
+
+    $(div)
+       .css({ top:markerOffset.y, left:markerOffset.x })
+       .show()
+       .appendTo(me.map_.getPane(G_MAP_FLOAT_PANE));
+  });
+
+  GEvent.addListener(div, 'dataedit', function() {
+    $(div).addClass('ui-state-error');
+    me.updateHighlightPoly_();
+  });
+
+  GEvent.addListener(div, 'datasave', function() {
+    $(div).removeClass('ui-state-error');
+    $(div).fadeOut();
+    geometry.isEditable = false;
+    geometry.isEdited = false;
+    geometry.hasEnded = true;
+    if (document.getElementById('name_input' + geometry.key)) { 
+      geometry.data.name = document.getElementById('name_input' +geometry.key).value;
+      geometry.data.description = document.getElementById('description_input' + geometry.key).value; 
+    }
+    if (geometry.data.type == 'point') {
+      geometry.data.coordinates = [{lat: geometry.overlay.getLatLng().lat(), lng:  geometry.overlay.getLatLng().lng()}];
+    } else if (geometry.data.type == 'line' || geometry.data.type == 'poly') {
+      geometry.data.coordinates = [];
+      for (var i = 0; i < geometry.overlay.getVertexCount(); i++) {
+        geometry.data.coordinates.push({lat: geometry.overlay.getVertex(i).lat(), lng: geometry.overlay.getVertex(i).lng()});
+      }
+    } 
+    me.saveData_(geometry);
+    me.updateHighlightPoly_();
+  });
+
+  GEvent.addListener(div, 'resetview', function() {
+    $(div).removeClass('ui-state-error');
+    innerDiv.html('');
+    var view_div = me.createView_(geometry, div);
+    innerDiv.append(view_div);
+
+    if (geometry.data.type == 'point') {
+      geometry.overlay.disableDragging();
+    } else if (geometry.data.type == 'line' || geometry.data.type == 'poly') {
+      geometry.overlay.disableEditing();
+      GEvent.clearListeners(geometry.overlay,  'mouseover');
+      GEvent.clearListeners(geometry.overlay,  'mouseout');
+    }
+  });
+
+  GEvent.addListener(div, 'enableedit', function() {
+    innerDiv.html('');
+    var form_div = me.createForm_(geometry, div);
+    innerDiv.append(form_div);
+
+    geometry.isEditable = true;
+
+    me.updateHighlightPoly_();
+    if (geometry.data.type == 'point') {
+      geometry.overlay.enableDragging();
+    }
+    else if (geometry.data.type == 'line' || geometry.data.type == 'poly') {
+      GEvent.addListener(geometry.overlay, 'mouseover', function() {
+        geometry.overlay.enableEditing();
+      });
+      GEvent.addListener(geometry.overlay, 'mouseout', function() {
+        geometry.overlay.disableEditing();
+      });
+    }
+  });
+
+  me.dom_.markerDivs.push(div);
+  return div;
+}
+
+Mappy.prototype.createTableRow_ = function(label, value, is_input, geometry) {
+  if (is_input) {
+    var value_input = document.createElement('input');
+    value_input.style.marginBottom = '10px';
+    value_input.type = 'text';
+    value_input.value = value;
+    value_input.id = label.toLowerCase() + '_input' + geometry.key;
+    value_input.onkeyup = function() {
+      geometry.isEdited = true;
+      GEvent.trigger(geometry.sidebar_entry, 'dataedit');
+    }
+    value_input.focus();
+    return value_input;
+  } else {
+    var valueSpan = $('<span');
+    valueSpan.id = geometry.key + label.toLowerCase();
+    valueSpan.appendChild(document.createTextNode(value));
+    return valueSpan[0];
+  }
+}
+
+Mappy.prototype.createView_ = function(geometry, parent_div) {
+  var me = this;
+  var div = $('<div>').addClass('sidebarview').html('<b>' + geometry.data.name + '</b><br>' + geometry.data.description + '<br>' + '<em>' + 'Created by: ' + geometry.data.userId + '</em>');
+  return div[0];
+}
+
+Mappy.prototype.createForm_ = function(geometry, parent_div) {
+  var me = this;
+
+  var div = document.createElement('div');
+  div.appendChild(me.createTableRow_('Name', geometry.data.name, true, geometry));
+  div.appendChild($('<br/>')[0]);
+  div.appendChild(me.createTableRow_('Description', geometry.data.description, true, geometry));
+  div.appendChild($('<br/>')[0]);
+ 
+  var save_button = Mappy.createButton('Save');
+  save_button.onclick = function() {
+    GEvent.trigger(parent_div, 'datasave');
+  }
+  div.appendChild(save_button);
+
+  var delete_button = Mappy.createButton('Delete');
+  delete_button.onclick = function() {
+    me.saveData_('delete', geometry.data); 
+    // should do this after delete confirmed
+    if (geometry.data.type != 'point'){
+      geometry.overlay.disableEditing();
+    }
+    me.map_.removeOverlay(geometry.overlay);
+    me.updateHighlightPoly_();
+    me.dom_.sidebar_div.removeChild(parent_div);
+  };
+  div.appendChild(delete_button);
+
+  var cancel_button = Mappy.createButton('Cancel');
+  cancel_button.onclick = function() {
+    me.updateHighlightPoly_();
+  };
+  div.appendChild(cancel_button); 
+  return div;
+};
+
+Mappy.createButton = function(label) {
+ return $('<a href="#">').addClass('mp-button ui-state-default ui-corner-all').html(label)[0];
+}
+
+Mappy.prototype.saveData_ = function(geometry) {
+  saveState(geometry.key, JSON.stringify(geometry.data));
+};
+
+Mappy.prototype.createGeometry_ = function(key, data) {
+  var me = this;
+
+  var geometry = {};
+  geometry.isEditing = false;
+  geometry.data = data;
+  geometry.data.name = unescape(data.name);
+  geometry.data.description = unescape(data.description);
+
+  if (inEditing()) {
+  geometry.isEdited = true;
+  geometry.isEditable = true;
+  geometry.hasEnded = true;
+  }
+
+  if (!key) {
+    var newDate = new Date();
+    geometry.key = "overlay-" + newDate.getTime();
+  } else {
+    geometry.key = key;
+  }
+  geometry.overlay = me.createGeometryOverlay(geometry);
+  geometry.sidebar_entry = me.createSidebarEntry_(geometry);
+  me.connectOverlayAndMarker(geometry);
+  if (inEditing()) {
+    GEvent.trigger(geometry.sidebar_entry, 'enableedit');
+  }
+  me.geometries_[geometry.key] = geometry;
+  return geometry;
+}
+
+Mappy.prototype.createGeometryOverlay = function(geometry) {
+  var overlay;
+  if (geometry.data.type == 'point') {
+    overlay = new GMarker(new GLatLng(geometry.data.coordinates[0].lat, geometry.data.coordinates[0].lng), {draggable: true, icon: this.icon_});
+  } else if (geometry.data.type == 'line' || geometry.data.type == 'poly') {
+    var latlngs = [];
+    for (var i = 0; i < geometry.data.coordinates.length; i++) {
+      latlngs.push(new GLatLng(geometry.data.coordinates[i].lat, geometry.data.coordinates[i].lng));
+    }
+    overlay = (geometry.data.type == 'line') ? new GPolyline(latlngs) : new GPolygon(latlngs, '#0000ff', 2, 0.7, '#0000ff', 0.2);
+  }
+  this.map_.addOverlay(overlay);
+  return overlay;
+}
+
+Mappy.prototype.connectOverlayAndMarker = function(geometry) {
+  var me = this;
+  if (geometry.overlay instanceof GMarker) {
+    GEvent.addListener(geometry.overlay, 'dragend', function() {
+      geometry.isEdited = true;
+      me.updateHighlightPoly_();
+      GEvent.trigger(geometry.sidebar_entry, 'dataedit');
+    });
+  } else {
+    GEvent.addListener(geometry.overlay, 'endline', function() {
+      me.editingNow = false;
+      geometry.isEditing = false;
+      geometry.isEdited = true;
+      geometry.hasEnded = true;
+      GEvent.trigger(geometry.sidebar_entry, 'datasave');
+      GEvent.trigger(geometry.sidebar_entry, 'highlight');
+    });
+    GEvent.addListener(geometry.overlay, 'lineupdated', function() {
+      geometry.isEdited = true;
+      me.updateHighlightPoly_();
+      GEvent.trigger(geometry.sidebar_entry, 'datasave');
+    });
+  }
+  GEvent.addListener(geometry.overlay, 'click', function() {
+    GEvent.trigger(geometry.sidebar_entry, 'highlight');
+  });
+  if (inEditing()) {
+    GEvent.trigger(geometry.sidebar_entry, 'enableedit');
+  } else {
+    GEvent.trigger(geometry.sidebar_entry, 'resetview');
+  }
+}
+
+Mappy.prototype.extendMarker_ = function(gs, marker, html, result) {
+  var me = this;
+  // extend the passed in html for this result
+  // http://code.google.com/apis/ajaxsearch/documentation/reference.html#_class_GlocalResult
+  if (!me.isUserLoggedIn_()) return; 
+  var div = document.createElement('div');
+  var button = document.createElement('input');
+  button.type = 'button';
+  button.value = 'Create copy on map';
+  button.onclick = function() {
+    var new_geometry_data = {};
+    new_geometry_data.name = result.titleNoFormatting;
+    new_geometry_data.description = result.streetAddress;
+    new_geometry_data.userId = wave.getViewer().getDisplayName();
+    new_geometry_data.fromGoogleBar = true;
+    new_geometry_data.type = 'point';
+    new_geometry_data.coordinates = [];
+    new_geometry_data.coordinates.push({lat: marker.getLatLng().lat(), lng: marker.getLatLng().lng()});
+    marker.closeInfoWindow();
+    var new_geometry = gs.createGeometry_(null, new_geometry_data); 
+    GEvent.trigger(new_geometry.sidebar_entry, 'datasave');
+  };
+
+  div.appendChild(html);
+  div.appendChild(button);
+  return div;
+};
+ 
+function EditControl() {
+}
+
+EditControl.prototype = new GControl();
+
+EditControl.prototype.initialize = function(map) {
+  var me = this;
+  me.buttons_ = [];
+ 
+  var control_div = document.createElement('div'); 
+  var control_table = document.createElement('table');
+  var control_tr = document.createElement('tr');
+  
+  var vc_opts = {img_url: 'http://www.google.com/intl/en_us/mapfiles/ms/t/Bsu.png',
+                 img_hover_url: 'http://www.google.com/intl/en_us/mapfiles/ms/t/Bsd.png',
+                 name: 'view', tooltip: 'Select geometries by clicking on them.'};
+  var view_button = this.createButton_(vc_opts);
+  var view_td = document.createElement('td');
+  view_td.appendChild(view_button.img);
+
+  var mc_opts = {img_url: 'http://www.google.com/intl/en_us/mapfiles/ms/t/Bmu.png',
+                 img_hover_url: 'http://www.google.com/intl/en_us/mapfiles/ms/t/Bmd.png',
+                 name: 'point', tooltip: 'Click on the map to create a new marker.'};
+  var marker_button = this.createButton_(mc_opts);
+  var marker_td = document.createElement('td');
+  marker_td.appendChild(marker_button.img);
+
+  var lc_opts = {img_url: 'http://www.google.com/intl/en_us/mapfiles/ms/t/Blu.png',
+                 img_hover_url: 'http://www.google.com/intl/en_us/mapfiles/ms/t/Bld.png',
+                 name: 'line', tooltip: 'Click on the map to start creating a new line.'};
+  var line_button = this.createButton_(lc_opts);
+  var line_td = document.createElement('td');
+  line_td.appendChild(line_button.img);
+
+  var pc_opts = {img_url: 'http://www.google.com/intl/en_us/mapfiles/ms/t/Bpu.png',
+                 img_hover_url: 'http://www.google.com/intl/en_us/mapfiles/ms/t/Bpd.png',
+                 name: 'poly', tooltip: 'Click on the map to start creating a new filled poly.'};
+  var poly_button = this.createButton_(pc_opts);
+  var poly_td = document.createElement('td');
+  poly_td.appendChild(poly_button.img);
+
+  control_tr.appendChild(view_td);
+  control_tr.appendChild(marker_td);
+  control_tr.appendChild(line_td);
+  control_tr.appendChild(poly_td);
+  control_table.appendChild(control_tr);
+  control_div.appendChild(control_table);
+  GEvent.trigger(view_button.img, 'click');
+  map.getContainer().appendChild(control_div);
+  return control_div;
+} 
+ 
+EditControl.prototype.createButton_ = function(button_opts) {
+  var me = this;
+  var button = {};
+  button.opts = button_opts;
+
+  var button_img = document.createElement('img');
+  button_img.style.cursor = 'pointer';
+  button_img.width = '33';
+  button_img.height = '33';
+  button_img.border = '0';
+  button_img.src = button_opts.img_url;
+  button_img.id = button_opts.name+'_control';
+  GEvent.addDomListener(button_img, "click", function() { 
+    for (var i = 0; i < me.buttons_.length; i++) {
+      me.buttons_[i].img.src = me.buttons_[i].opts.img_url;
+    }
+    button_img.src = button_opts.img_hover_url;  
+    GEvent.trigger(me, button_opts.name);
+  });  
+
+  button.img = button_img;
+  me.buttons_.push(button);
+  return button;
+}
+
+EditControl.prototype.getDefaultPosition = function() {
+  return new GControlPosition(G_ANCHOR_BOTTOM_LEFT, new GSize(260, 0));
+}
+
+function StatusControl() {
+}
+
+StatusControl.prototype = new GControl();
+
+StatusControl.prototype.initialize = function(map) {
+  var me = this;
+  var status_div = document.createElement('span');
+  status_div.style.color = 'grey';
+  status_div.style.backgroundColor = 'white';
+  status_div.style.border = '1px solid grey';
+  status_div.style.padding = '5px';
+  status_div.style.fontSize = '11px';
+  status_div.innerHTML = 'Select geometries by clicking on them.';
+  this.status_div = status_div;
+  map.getContainer().appendChild(status_div);
+  return this.status_div;
+}
+
+StatusControl.prototype.setText = function(text) {
+  this.status_div.innerHTML = text;
+}
+
+StatusControl.prototype.getDefaultPosition = function() {
+  return new GControlPosition(G_ANCHOR_BOTTOM_LEFT, new GSize(420, 5));
+}
+ 
+function SharedMapControl() {
+}
+
+SharedMapControl.prototype = new GControl();
+
+SharedMapControl.prototype.initialize = function(map) {
+  this.map_ = map;
+  var map_img = document.createElement('img');
+  map_img.width = "60";
+  map_img.height = "60";
+  map_img.style.display = "none";
+  map_img.style.cursor = "pointer";
+  map_img.style.border = "2px solid #77D5F7";
+  map_img.title = "Return to shared map view.";
+  this.map_img_ = map_img;
+  map.getContainer().appendChild(map_img);
+  return map_img;
+}
+
+SharedMapControl.prototype.updateMap = function(center, zoom) {
+  var me = this;
+  this.map_img_.style.display = "block";
+  var url = "http://maps.google.com/maps/api/staticmap?center=" + center.toUrlValue(6) + "&zoom=" + zoom + "&size=100x100&key=" + key + "&sensor=false";
+  this.map_img_.src = url;
+  this.map_img_.onclick = function() {
+    me.map_.setCenter(center, zoom);
+    me.map_img.style.display = 'none';
+  };
+}
+
+SharedMapControl.prototype.getDefaultPosition = function() {
+  return new GControlPosition(G_ANCHOR_TOP_LEFT, new GSize(12, 150));
+}
+
+  function executeSearch(query) {
+    var geocoder = new GClientGeocoder();
+    geocoder.getLocations(query, function(latlng) {
+    if (latlng) {
+      var exData = location.Placemark[0].ExtendedData;
+      var bounds = exData ? exData.LatLonBox : undefined;
+      if (bounds) {
+        var llbounds = new GLatLngBounds(
+               new GLatLng(bounds.south, bounds.west),
+               new GLatLng(bounds.north, bounds.east));
+        map.setCenter(latlng, map.getBoundsZoomLevel(llbounds));
+      }
+    } else { 
+      // display mini-msg about not finding?
+    }
+    });
+  }
+
+  function saveState(key, value) {
+    var state = wave.getState();
+    var delta = {};
+    delta[key] = value + "";
+    state.submitDelta(delta); 
+  }
+
+  function getState(key) {
+    var state = wave.getState();
+    return state.get(key);
+  }
+
+  function receiveMode(mode) {
+    waveMode = mode;
+    modeSwitch();
+  }
+
+  function modeSwitch() {
+    if (!waveMode || !adminPanel) return;
+    switch (waveMode) {
+      case wave.Mode.PLAYBACK:
+        adminPanel.removeEditingUI_();
+        break;
+      case wave.Mode.EDIT:
+        adminPanel.addEditingUI_();
+        break;
+      case wave.Mode.VIEW:
+        adminPanel.removeEditingUI_();
+        break;
+    }
+  }
+
+  function inEditing() {
+    return waveMode == wave.Mode.EDIT;
+  }
+
+  $.fn.uiHover = function(){
+    return this.each(function(){
+     $(this).hover(
+       function(){ $(this).addClass('ui-state-hover'); },
+       function(){ $(this).removeClass('ui-state-hover'); }
+     );
+    });
+  }
+  google.setOnLoadCallback(initialize);
+</script>
+</head>
+<body onload="" onunload="GUnload()">
+  <center>
+  <div id="map_canvas" style="width: 95%; height: 100%"></div>
+
+  <ul id="dropdown">
+    <li onclick="adminPanel.map_.setMapType(G_NORMAL_MAP);" class="ui-state-default ui-corner-all"><a href="#">Map</a></li>
+    <li onclick="adminPanel.map_.setMapType(G_SATELLITE_MAP);" class="ui-state-default ui-corner-all"><a href="#">Satellite</a></li>
+    <li onclick="adminPanel.map_.setMapType(G_HYBRID_MAP);" class="ui-state-default ui-corner-all"><a href="#">Hybrid</a></li>
+    <li onclick="adminPanel.map_.setMapType(G_PHYSICAL_MAP);" class="ui-state-default ui-corner-all"><a href="#">Terrain</a></li>
+  </ul>
+
+  </center>
+</body>
+</html>
+]]></Content>
+</Module>
