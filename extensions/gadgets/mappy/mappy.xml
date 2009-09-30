@@ -13,7 +13,7 @@
    #message, #list { position:absolute; }
    #message { padding: 5px; }
    #list li { list-style:none; padding:3px; margin-bottom:2px; }
-   .mp-button { text-decoration: none; padding: 3px; }
+   .mp-button { cursor:pointer; text-decoration: none; padding: 3px; }
    .mp-button a { color: #ffffff; }
    .mp-button a:visited { color: #ffffff; }
    .mp-button a:hover { color: #ffffff; }
@@ -264,13 +264,13 @@ Mappy.prototype.createMap_ = function() {
 
 Mappy.prototype.removeEditingUI_ = function() {
   var me = this;
-  if (this.edit_control_) {
-    this.map_.removeControl(this.edit_control_);
-    this.edit_control_ = null;
+  if (this.editControl) {
+    this.map_.removeControl(this.editControl);
+    this.editControl = null;
   }
-  if (this.status_control_) {
-    this.map_.removeControl(this.status_control_);
-    this.status_control_ = null;
+  if (this.statusControl) {
+    this.map_.removeControl(this.statusControl);
+    this.statusControl = null;
   }
   this.map_.disableGoogleBar();
 
@@ -286,12 +286,12 @@ Mappy.prototype.addEditingUI_ = function() {
     me.map_.removeControl(this.sharedMapControl_);
     this.sharedMapControl_ = null;
   }
-  this.edit_control_ = new EditControl();
-  this.map_.addControl(this.edit_control_);
-  this.status_control_ = new StatusControl();
-  this.map_.addControl(this.status_control_);
-  edit_control = this.edit_control_;
-  status_control = this.status_control_;
+  this.editControl = new EditControl();
+  this.map_.addControl(this.editControl);
+  this.statusControl = new StatusControl();
+  this.map_.addControl(this.statusControl);
+  edit_control = this.editControl;
+  status_control = this.statusControl;
   this.map_.enableGoogleBar();
 
     GEvent.addListener(edit_control, 'view', function() {
@@ -410,7 +410,7 @@ Mappy.prototype.createSidebarEntry_ = function(geometry) {
   });
 
   GEvent.addListener(div, 'dataedit', function() {
-    $(div).addClass('ui-state-error');
+    //$(div).addClass('ui-state-error');
     me.updateHighlightPoly_();
   });
 
@@ -481,7 +481,7 @@ Mappy.getIdForGeometryField = function(geometry, field, suffix) {
   return geometry.key + field + (suffix || '');
 }
 
-Mappy.prototype.createTableRow_ = function(label, value, is_input, geometry) {
+Mappy.prototype.createTableRow_ = function(label, value, is_input, geometry, isFinal) {
   var value_input = document.createElement('input');
   value_input.style.marginBottom = '10px';
   value_input.type = 'text';
@@ -490,7 +490,21 @@ Mappy.prototype.createTableRow_ = function(label, value, is_input, geometry) {
   value_input.onkeyup = function() {
     geometry.isEdited = true;
     GEvent.trigger(geometry.sidebar_entry, 'dataedit');
-    }
+    
+  }
+  if (isFinal) {
+    value_input.onkeypress = function(e) {
+      var keycode;
+      if (window.event) {
+        keycode = window.event.keyCode;
+      } else if (e) {
+       keycode = e.which;
+      }
+      if (keycode == 13) {
+        GEvent.trigger(geometry.sidebar_entry, 'datasave');
+      }
+   };
+  }
   value_input.focus();
   return value_input;
 }
@@ -507,7 +521,7 @@ Mappy.prototype.createForm_ = function(geometry, parent_div) {
   var div = document.createElement('div');
   div.appendChild(me.createTableRow_('Name', geometry.data.name, true, geometry));
   div.appendChild($('<br/>')[0]);
-  div.appendChild(me.createTableRow_('Description', geometry.data.description, true, geometry));
+  div.appendChild(me.createTableRow_('Description', geometry.data.description, true, geometry, true));
   div.appendChild($('<br/>')[0]);
  
   var save_button = Mappy.createButton('Save');
@@ -527,13 +541,6 @@ Mappy.prototype.createForm_ = function(geometry, parent_div) {
   };
   div.appendChild(delete_button);
 
-/*
-  var cancel_button = Mappy.createButton('Cancel');
-  cancel_button.onclick = function() {
-    me.updateHighlightPoly_();
-  };
-  div.appendChild(cancel_button); 
-*/
   return div;
 };
 
@@ -612,10 +619,13 @@ Mappy.prototype.connectOverlayAndMarker = function(geometry) {
       geometry.hasEnded = true;
       GEvent.trigger(geometry.sidebar_entry, 'datasave');
       GEvent.trigger(geometry.sidebar_entry, 'highlight');
+      GEvent.trigger(me.editControl, 'line');
     });
     GEvent.addListener(geometry.overlay, 'lineupdated', function() {
       geometry.isEdited = true;
-      me.updateHighlightPoly_();
+      if (me.mode_ == 'line' || me.mode_ == 'poly') {
+        me.statusControl.setText('Click on the final point to finish the line.');
+      }
       GEvent.trigger(geometry.sidebar_entry, 'datasave');
     });
   }
