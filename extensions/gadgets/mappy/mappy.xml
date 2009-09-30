@@ -57,7 +57,6 @@
       adminPanel = new Mappy("map_canvas");
       modeSwitch();
     } 
- 
     var center = JSON.parse(getState('center'));
     if (center) {
       adminPanel.sharedCenter_ = new GLatLng(center[0], center[1]);
@@ -69,7 +68,8 @@
         adminPanel.map_.setCenter(adminPanel.sharedCenter_, adminPanel.sharedZoom_);
        }
       }
-    }
+    } 
+
 
     var maptypes = {'m': G_NORMAL_MAP, 'k': G_SATELLITE_MAP, 'h': G_HYBRID_MAP, 'p': G_PHYSICAL_MAP};
     var maptype = getState('maptype');
@@ -119,6 +119,15 @@
         adminPanel.map_.removeOverlay(geometry.overlay);
         adminPanel.geometries_[geometryKey] = null;
       }
+    }
+
+    if (allKeys.length == 0) {
+		$("#dialog").dialog({
+			bgiframe: true,
+			height: 140,
+			modal: true, 
+                        resizable: false
+		}).show();
     }
   }
 
@@ -880,6 +889,10 @@ SharedMapControl.prototype.getDefaultPosition = function() {
     <li onclick="adminPanel.map_.setMapType(G_HYBRID_MAP);" class="ui-state-default ui-corner-all"><a href="javascript:void(0)">Hybrid</a></li>
     <li onclick="adminPanel.map_.setMapType(G_PHYSICAL_MAP);" class="ui-state-default ui-corner-all"><a href="javascript:void(0)">Terrain</a></li>
   </ul>
+
+  <div id="dialog" style="display:none" title="Welcome!">
+    <p>You can get started by searching for a location or place in the box, and then adding markers and shapes to the map.</p>
+  </div>
 
   </center>
 </body>
