@@ -37,6 +37,7 @@
   google.load("search", "1");
 </script>
 <script src="http://imagine-it.org/google/wave/jqueryui/js/jquery-ui-1.7.2.custom.min.js" type="text/javascript" charset="utf-8"></script>
+<script language="JavaScript" src="http://www.geoplugin.net/javascript.gp" type="text/javascript"></script>
 <script type="text/javascript">
 
   var adminPanel;
@@ -122,12 +123,28 @@
     }
 
     if (allKeys.length == 0) {
-		$("#dialog").dialog({
-			bgiframe: true,
-			height: 140,
-			modal: true, 
-                        resizable: false
-		}).show();
+	$("#dialog").dialog({
+		bgiframe: true,
+		height: 140,
+		modal: true, 
+                resizable: false
+	}).show();
+      var lat = null;
+      var lng = null;
+      if (google.loader.ClientLocation) {
+        lat = google.loader.ClientLocation.latitude;
+        lng = google.loader.ClientLocation.longitude;
+      } else {
+        lat = geoplugin_latitude();
+        lng = geoplugin_longitude();
+      }
+      if (lat && lng && !adminPanel.sharedCenter_) {
+        if (adminPanel.statusControl) {
+          adminPanel.statusControl.setText('<a href="http://www.geoplugin.com/" target="_blank">Geolocation by geoPlugin</a>');
+        }
+        adminPanel.map_.setCenter(new GLatLng(lat, lng), 12);
+        adminPanel.saveCenter();
+      }
     }
   }
 
@@ -247,9 +264,7 @@ Mappy.prototype.createMap_ = function() {
 
   GEvent.addListener(this.map_, 'dragend', function() {
     if (inEditing()) {
-      var state = wave.getState();
-      state.submitDelta({'center': JSON.stringify([me.map_.getCenter().lat(), me.map_.getCenter().lng()]),
-       'zoom': me.map_.getZoom() + ""});
+      me.saveCenter();
     }
   });
   GEvent.addListener(this.map_, 'maptypechanged', function() {
@@ -274,6 +289,12 @@ Mappy.prototype.createMap_ = function() {
   modeSwitch();
 };
 
+Mappy.prototype.saveCenter = function() {
+  var me = this;
+  var state = wave.getState();
+  state.submitDelta({'center': JSON.stringify([me.map_.getCenter().lat(), me.map_.getCenter().lng()]),
+       'zoom': me.map_.getZoom() + ""});
+}
 
 Mappy.prototype.removeEditingUI_ = function() {
   var me = this;
@@ -891,7 +912,7 @@ SharedMapControl.prototype.getDefaultPosition = function() {
   </ul>
 
   <div id="dialog" style="display:none" title="Welcome!">
-    <p>You can get started by searching for a location or place in the box, and then adding markers and shapes to the map.</p>
+    <p>You can now create your map by placing markers and shapes, or searching for locations and businesses and adding them.</p>
   </div>
 
   </center>
