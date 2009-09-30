@@ -63,7 +63,7 @@
       adminPanel.sharedCenter_ = new GLatLng(center[0], center[1]);
       adminPanel.sharedZoom_ = parseInt(JSON.parse(getState('zoom')));
       if (adminPanel.sharedMapControl_) {
-        adminPanel.sharedMapControl_.updateMap(adminPanel.sharedCenter_, adminPanel.sharedZoom_);
+        adminPanel.sharedMapControl_.updateMap(adminPanel.sharedCenter_, adminPanel.sharedZoom_, adminPanel.sharedMapType);
       } else {
        if (!inEditing()) {
         adminPanel.map_.setCenter(adminPanel.sharedCenter_, adminPanel.sharedZoom_);
@@ -75,6 +75,7 @@
     var maptype = getState('maptype');
     if (maptype) {
       var maptypeConstant = maptypes[maptype];
+      adminPanel.sharedMapType = maptypeConstant;
       if (adminPanel.map_.getCurrentMapType() != maptypeConstant) {
         adminPanel.map_.setMapType(maptypeConstant);
       }
@@ -247,6 +248,9 @@ Mappy.prototype.createMap_ = function() {
        var state = wave.getState();
        state.submitDelta({'maptype': me.map_.getCurrentMapType().getUrlArg()});
      }
+     if (me.sharedMapControl_) {
+       me.sharedMapControl_.updateMap(me.sharedCenter_, me.sharedZoom_, me.sharedMapType);
+     } 
   });
 
   GEvent.addListener(this.map_, 'movestart', function() {
@@ -255,7 +259,7 @@ Mappy.prototype.createMap_ = function() {
         me.sharedMapControl_ = new SharedMapControl();
         me.map_.addControl(me.sharedMapControl_);
       }
-      me.sharedMapControl_.updateMap(me.sharedCenter_, me.sharedZoom_);
+      me.sharedMapControl_.updateMap(me.sharedCenter_, me.sharedZoom_, me.sharedMapType);
     }
   });
   modeSwitch();
@@ -788,11 +792,11 @@ SharedMapControl.prototype.initialize = function(map) {
   return this.button;
 }
 
-SharedMapControl.prototype.updateMap = function(center, zoom) {
+SharedMapControl.prototype.updateMap = function(center, zoom, maptype) {
   var me = this;
   me.button.style.display = 'block';
   this.button.onclick = function() {
-    me.map_.setCenter(center, zoom);
+    me.map_.setCenter(center, zoom, maptype);
     me.button.style.display = 'none';
   };
 }
@@ -871,10 +875,10 @@ SharedMapControl.prototype.getDefaultPosition = function() {
   <div id="map_canvas" style="width: 95%; height: 100%"></div>
 
   <ul id="dropdown">
-    <li onclick="adminPanel.map_.setMapType(G_NORMAL_MAP);" class="ui-state-default ui-corner-all"><a href="#">Map</a></li>
-    <li onclick="adminPanel.map_.setMapType(G_SATELLITE_MAP);" class="ui-state-default ui-corner-all"><a href="#">Satellite</a></li>
-    <li onclick="adminPanel.map_.setMapType(G_HYBRID_MAP);" class="ui-state-default ui-corner-all"><a href="#">Hybrid</a></li>
-    <li onclick="adminPanel.map_.setMapType(G_PHYSICAL_MAP);" class="ui-state-default ui-corner-all"><a href="#">Terrain</a></li>
+    <li onclick="adminPanel.map_.setMapType(G_NORMAL_MAP);" class="ui-state-default ui-corner-all"><a href="javascript:void(0)">Map</a></li>
+    <li onclick="adminPanel.map_.setMapType(G_SATELLITE_MAP);" class="ui-state-default ui-corner-all"><a href="javascript:void(0)">Satellite</a></li>
+    <li onclick="adminPanel.map_.setMapType(G_HYBRID_MAP);" class="ui-state-default ui-corner-all"><a href="javascript:void(0)">Hybrid</a></li>
+    <li onclick="adminPanel.map_.setMapType(G_PHYSICAL_MAP);" class="ui-state-default ui-corner-all"><a href="javascript:void(0)">Terrain</a></li>
   </ul>
 
   </center>
