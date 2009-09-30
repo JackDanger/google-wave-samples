@@ -3,7 +3,7 @@
     thumbnailUrl="http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/gadgets/mappy/screenshot_mapgadget.png"
     description="Collaborate on a map of placemarks, paths, and shapes with other participants. Great for planning events and trips."> 
   <author name="Google"/> 
-  <menuHook location="TOOLBAR" text="Add Mappy"
+  <menuHook location="TOOLBAR" text="Add Map Gadget"
       iconUrl="https://wave-api.appspot.com/public/images/insertMap.png"> 
     <insertGadget url="http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/gadgets/mappy/mappy.xml"/> 
   </menuHook> 
