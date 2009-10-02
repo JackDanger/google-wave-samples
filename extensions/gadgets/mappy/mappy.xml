@@ -340,20 +340,24 @@ Mappy.prototype.addEditingUI_ = function() {
   status_control = this.statusControl;
   this.map_.enableGoogleBar();
 
-    GEvent.addListener(edit_control, 'view', function() {
+  GEvent.addListener(edit_control, 'view', function() {
     me.mode_ = 'view';
+    me.editingNow = false;
     status_control.setText('Select geometries by clicking on them.');
   });
   GEvent.addListener(edit_control, 'point', function() {
     me.mode_ = 'point';
+    me.editingNow = false;
     status_control.setText('Click on the map to create a new marker.');
   });
   GEvent.addListener(edit_control, 'line', function() {
     me.mode_ = 'line';
+    me.editingNow = false;
     status_control.setText('Click on the map to start creating a new line.');
   });
   GEvent.addListener(edit_control, 'poly', function() {
     me.mode_ = 'poly';
+    me.editingNow = false;
     status_control.setText('Click on the map to start creating a new filled poly.');
   });
   for (var i = 0; i < me.dom_.markerDivs.length; i++) {
@@ -444,7 +448,7 @@ Mappy.prototype.createSidebarEntry_ = function(geometry) {
 
     var bounds = me.map_.getBounds();
     var markerOffset = me.map_.fromLatLngToDivPixel(this.latlng_);
-    var bottomPoint = me.map_.fromDivPixelToLatLng(new GPoint(markerOffset.x + 150, markerOffset.y + 70));
+    var bottomPoint = me.map_.fromDivPixelToLatLng(new GPoint(markerOffset.x + 150, markerOffset.y + 100));
     if (!bounds.contains(bottomPoint)) {
       me.map_.panTo(this.latlng_);
     }
