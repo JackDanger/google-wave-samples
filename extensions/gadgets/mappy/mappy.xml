@@ -148,6 +148,11 @@
     }
   }
 
+function log(string) {
+  if (wave.log) {
+    wave.log("FROM MAPS GADGET " + string);
+  }
+}
 
 
 Mappy = function(id) {
@@ -231,10 +236,17 @@ Mappy.prototype.createMap_ = function() {
 
   GEvent.addListener(this.map_, 'click', function(overlay, latlng) {
     if (!inEditing() || me.editingNow) {
+      log("editing now: " + me.editingNow);
       return;
     }
-    if (overlay) return;
-    if (me.mode_ == 'view' || !me.mode_) return;
+    if (overlay) {
+      log("clicked on overlay");
+      return;
+    }
+    if (me.mode_ == 'view' || !me.mode_) {
+      log("mode_ : " + me.mode_);
+      return;
+    }
     new_geometry_data = {};
     new_geometry_data.name = '';
     new_geometry_data.description = '';
