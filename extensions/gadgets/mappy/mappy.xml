@@ -660,6 +660,7 @@ Mappy.prototype.connectOverlayAndMarker = function(geometry) {
   } else {
     GEvent.addListener(geometry.overlay, 'endline', function() {
       me.editingNow = false;
+      log("endline");
       geometry.isEditing = false;
       geometry.isEdited = true;
       geometry.hasEnded = true;
