@@ -1,0 +1,20 @@
+<extension
+     name="Hello-Worldy"
+     description="Install Hello-Worldy Bot!"
+     thumbnailUrl="http://hello-worldy.appspot.com/images/robot.jpg"> 
+  <author name="Austin Chau" email="austinchau@google.com"/> 
+  
+  <menuHook location="NEW_WAVE_MENU" text="New Wave with Hello-Worldy Bot"
+      iconUrl="http://hello-worldy.appspot.com/images/robot.jpg"> 
+    <createNewWave>
+    	<participant id="hello-worldy@appspot.com" />
+    </createNewWave>
+  </menuHook>
+  
+  <menuHook location="TOOLBAR" text="Add Hello-Worldy Bot"
+      iconUrl="http://hello-worldy.appspot.com/images/robot.jpg">
+    <addParticipants> 
+    	<participant id="hello-worldy@appspot.com" />
+    </addParticipants>     
+  </menuHook>
+</extension>

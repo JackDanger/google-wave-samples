@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<w:robot xmlns:w="http://wave.google.com/extensions/robots/1.0">  
+  <w:version>102</w:version>  
+
+  <w:capabilities>
+    <w:capability name="wavelet_participants_changed"/>
+    <w:capability name="blip_submitted"/>
+    <w:capability name="form_button_clicked"/>    
+  </w:capabilities>
+  
+
+</w:robot>
+
