@@ -1,9 +1,0 @@
-<extension
-    name="Row of four"
-    description="Play the game against the computer or against another user."
-    thumbnailUrl="http://wave-skynet.appspot.com/public/extensions/areyouin/preview.png">
-  <author name="Douwe Osinga"/>
-  <menuHook location="TOOLBAR" text="Play game againt computer">
-    <participant id="rowoffour@appspot.com"></participant>
-  </menuHook>
-</extension>
