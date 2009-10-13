@@ -4,7 +4,6 @@
     thumbnailUrl="http://wave-skynet.appspot.com/public/extensions/areyouin/preview.png">
   <author name="Douwe Osinga"/>
   <menuHook location="TOOLBAR" text="Play game againt computer">
-    <insertGadget url="http://rowoffour.appspot.com/gadget.xml"/>
-    <addParticipant url="http://rowoffour.appspot.com/gadget.xml"/>
+    <participant id="rowoffour@appspot.com"></participant>
   </menuHook>
 </extension>
