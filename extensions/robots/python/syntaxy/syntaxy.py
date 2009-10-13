@@ -69,7 +69,7 @@ def HighlightRange(blip, range, lang):
   """ Highlight within a specific range within the text of a blip """
   # Set the text to an unknown language so Spelly will (hopefully) leave it alone
   blip.SetAnnotation(range, "lang", "xx")
-  otext = blip.GetTextRange(range)
+  otext = blip.GetText()[range.start:range.end]
   text = otext.lstrip()
   # adjust range to cut leading whitespace
   range.start = range.start + (len(otext) - len(text))
