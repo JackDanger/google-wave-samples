@@ -1,0 +1,14 @@
+<extension
+    name="Row of four"
+    description="Play the game against the computer or against another user."
+    thumbnailUrl="http://wave-skynet.appspot.com/public/extensions/areyouin/preview.png">
+  <author name="Douwe Osinga"/>
+  <menuHook location="newwavemenu" text="Creates a new Twitter wave."
+      iconUrl="http://wave-skynet.appspot.com/public/extensions/tweety/icon.png">
+       <participant id="tweety-wave@appspot.com"></participant>
+  </menuHook>
+  <menuHook location="NEW_WAVE_MENU" text="Play game againt computer">
+    <insertGadget url="http://rowoffour.appspot.com/gadget.xml"/>
+    <addParticipant url="http://rowoffour.appspot.com/gadget.xml"/>
+  </menuHook>
+</extension>

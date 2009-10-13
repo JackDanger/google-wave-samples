@@ -1,0 +1,25 @@
+application: rowoffour
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+
+- url: /_wave/.*
+  script: rowoffour.py
+
+- url: /rowoffour.py.txt
+  static_files: rowoffour.py.txt
+  upload: rowoffour.py.txt
+  mime_type: text/plain
+
+- url: /installer.xml
+  static_files: installer.xml
+  upload: installer.xml
+  mime_type: text/xml
+
+- url: /(.*)
+  static_files: public/\1
+  upload: public/(.*)
+
+

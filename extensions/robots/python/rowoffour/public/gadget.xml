@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+<ModulePrefs title="Row of four game" height="400" width="400">
+  <Require feature="dynamic-height"/>
+  <Require feature="wave-preview" /> 
+</ModulePrefs>
+<Content type="html"><![CDATA[
+  <script type="text/javascript"
+    src="http://rowoffour.appspot.com/jquery.js"></script>
+ <script type="text/javascript">
+  function cellContents(x, y) {
+    var html = $('#c' + y + x).html();
+    var p = html.indexOf('appspot.com/');
+    if (p != -1) {
+      html = html.substr(p + 12);
+      p = html.indexOf('.');
+      html = html.substr(0, p);
+      return html;
+    }
+    return 'empty';
+  }
+
+  function clear() {
+    var state = wave.getState();
+    delta = {};
+    delta['color'] = 'red';
+    for (var x = 0; x < 7; ++x) {
+      for (var y = 0; y < 6; ++y) {
+        delta['c' + y + x] = 'empty';
+      }
+    }
+    state.submitDelta(delta);
+  }
+
+  function renderState() {
+    if (!wave.getState() || !wave.getViewer()) {
+      return;
+    }
+    // update the field:
+    var state = wave.getState();
+    for (var x = 0; x < 7; ++x) {
+      for (var y = 0; y < 6; ++y) {
+        var key = 'c' + y + x;
+        var val = state.get(key, 'empty');
+        $('#' + key).html('<img src="http://rowoffour.appspot.com/' + val + '.png"/>');
+      }
+    }
+  }
+
+  function main() {
+    $('#butStart').click(function() {
+      clear();
+    });
+    $('td').click(function() {
+      var state = wave.getState();
+      var color = state.get('color', 'red');
+      var nextcolor;
+      if (color == 'red') {
+        nextcolor = 'blue';
+      } else {
+        nextcolor = 'red';
+      }
+      var playerid = wave.getViewer().getId();
+      //if (state.get(nextcolor, '') == playerid) {
+        // we already signed up as the other guy
+        //return;
+      //}
+      var curplayer = state.get(color, playerid);
+      if (playerid != curplayer) {
+        // not our turn
+        return;
+      }
+      var x = parseInt($(this).attr('id').charAt(2));
+      for (var y = 0; y < 6; y++) {
+        var value = cellContents(x, y);
+        if (value == 'empty') {
+          var delta = {};
+          delta['c' + y + x] = color;
+          delta[color] = playerid;
+          delta['color'] = nextcolor;
+          state.submitDelta(delta);
+          return;
+        }
+      }
+    });
+    if (wave && wave.isInWaveContainer()) {
+      wave.setStateCallback(renderState);
+      wave.setParticipantCallback(renderState);
+    }
+  }
+  gadgets.util.registerOnLoadHandler(main);
+
+ </script>
+
+<button id="butStart">New Game</button><br>
+<table border=1 cellspacing=0 id="board" width=350 height=300>
+ <tr><td id="c50"><td id="c51"><td id="c52"><td id="c53"><td id="c54"><td id="c55"><td id="c56">
+ <tr><td id="c40"><td id="c41"><td id="c42"><td id="c43"><td id="c44"><td id="c45"><td id="c46">
+ <tr><td id="c30"><td id="c31"><td id="c32"><td id="c33"><td id="c34"><td id="c35"><td id="c36">
+ <tr><td id="c20"><td id="c21"><td id="c22"><td id="c23"><td id="c24"><td id="c25"><td id="c26">
+ <tr><td id="c10"><td id="c11"><td id="c12"><td id="c13"><td id="c14"><td id="c15"><td id="c16">
+ <tr><td id="c00"><td id="c01"><td id="c02"><td id="c03"><td id="c04"><td id="c05"><td id="c06">
+</table>
+
+]]></Content>
+</Module>
+
