@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+  <ModulePrefs title="UpDown" height="500" width="100%">
+   <Require feature="wave"></Require>
+  </ModulePrefs>
+<Content type="html">
+<![CDATA[<html><head>
+<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAjU0EJWnWPMv7oQ-jjS7dYxQGj0PqsCtxKvarsoS-iqLdqZSKfxRdmoPmGl7Y9335WLC36wIGYa6o5Q&sensor=false" type="text/javascript"></script> 
+<script src="http://gmaps-utility-library-dev.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js" type="text/javascript"></script>
+</script>
+<script type="text/javascript">
+var markerClusterer;
+var markersAdded;
+var viewerMarker;
+var map;
+var icon;
+var bounds;
+
+/**
+ * Updates vote status information when the user clicks thumbs up or down.
+ * @param {string} dir The direction the user pressed (plus or minus).
+ */
+function saveLocation() {
+  var viewerId = wave.getViewer().getId();
+  var viewerData = {latlng: viewerMarker.getLatLng().toUrlValue(6)};
+  var delta = {};
+  delta[viewerId] = JSON.stringify(viewerData);
+  wave.getState().submitDelta(delta);
+}
+
+/**
+ * Updates the html of the page to reflect the vote status information.
+ */
+function stateUpdated() {
+  var icon = new GIcon(G_DEFAULT_ICON);
+  icon.image = "http://chart.apis.google.com/chart?cht=mm&chs=24x32&chco=FFFFFF,008CFF,000000&ext=.png";
+  if (viewerMarker) {
+    map.openInfoWindowHtml(viewerMarker.getLatLng(), "Saved");
+    map.removeOverlay(viewerMarker); 
+  }
+  var state = wave.getState();
+  if (state) {
+    var markers = [];
+    bounds = new GLatLngBounds();
+    var allKeys = state.getKeys();
+    if (allKeys.length == 0) { return; }
+    for (var i = 0; i < allKeys.length; i++) {
+      var key = allKeys[i];
+      var viewerData = JSON.parse(state.get(key));
+      var latlngString = viewerData.latlng;
+      var oldMarker = markersAdded[key];
+      var latlng = GLatLng.fromUrlValue(latlngString);
+      var name = wave.getParticipantById(key).getDisplayName(); 
+      var thumbnail = wave.getParticipantById(key).getThumbnailUrl(); 
+      bounds.extend(latlng);
+      if (!oldMarker) {
+        var marker = new GMarker(latlng, {icon: icon});
+        markersAdded[key] = marker;
+        marker.bindInfoWindowHtml('<img src="' + thumbnail + '"><br>' + name + '<br>');
+        markers.push(marker);
+      } else if (oldMarker && oldMarker.getLatLng().toUrlValue(6) != latlngString) {
+        markerClusterer.removeMarker(oldMarker);
+        var marker = new GMarker(latlng, {icon: icon});
+        marker.bindInfoWindowHtml('<img src="' + thumbnail + '"><br>' + name + '<br>');
+        markersAdded[key] = marker;
+        markers.push(marker);
+      } 
+    }
+    if (!markerClusterer) { // Haven't done initial clusters yet
+      markerClusterer = new MarkerClusterer(map, markers);         
+    } else {
+      markerClusterer.addMarkers(markers);
+    }
+    zoomToBounds();
+  }
+}
+
+function zoomToBounds() {
+  map.setCenter(bounds.getCenter(), map.getBoundsZoomLevel(bounds));
+}
+
+function init() {
+  makeMap();
+  if (wave && wave.isInWaveContainer()) {
+    wave.setStateCallback(stateUpdated);
+  }
+  stateUpdated();
+}
+
+function makeMap() {
+  map = new GMap2(document.getElementById('map'));
+  map.setCenter(new GLatLng(39.91, 116.38), 2);
+  map.addControl(new GLargeMapControl());
+  markersAdded = {};
+  icon = new GIcon(G_DEFAULT_ICON);
+  icon.image = "http://chart.apis.google.com/chart?cht=mm&chs=24x32&chco=FFFFFF,008CFF,000000&ext=.png";
+}
+
+function showAddress(address) {
+  var geocoder = new GClientGeocoder();
+  geocoder.getLatLng(address, function(point) {
+    if (!point) {
+      alert(address + " not found");
+    } else {
+      if (viewerMarker) {
+        map.removeOverlay(viewerMarker); 
+      }
+      viewerMarker = new GMarker(point, {icon: icon});
+      map.addOverlay(viewerMarker);
+      map.openInfoWindow(point, "Saving...");
+      saveLocation();
+    }
+  });
+}
+  
+gadgets.util.registerOnLoadHandler(init);
+</script>
+</head>
+<body>
+<div id="gadget-wrapper">
+<form action="#" onsubmit="showAddress(this.address.value); return false"> 
+      <p> 
+        Add yourself to the clustered map by entering your address:
+      </p> 
+      <p> 
+        <input type="text" style="width:350px" name="address" value="" /> 
+        <input type="submit" value="Locate" /> 
+</form>
+<div id="map" style="width:600px;height:400px;"></div> 
+  <input type="button" value="Zoom to bounds" onclick="zoomToBounds()"/>
+</div>
+</body>
+</html>
+]]></Content>
+</Module>

@@ -1,0 +1,10 @@
+<extension 
+    name="Map Cluster Gadget"
+    thumbnailUrl="http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/gadgets/mappy/screenshot_mapcluster.png"
+    description="Add your location to the map, and see where everyone else is from, using a cluster visualization.">
+  <author name="Google"/>
+  <menuHook location="TOOLBAR" text="Add Map Cluster Gadget"
+      iconUrl="http://chart.apis.google.com/chart?cht=mm&chs=24x32&chco=FFFFFF,008CFF,000000&ext=.png"> 
+    <insertGadget url="http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/gadgets/mapcluster/mapcluster.xml"/> 
+  </menuHook> 
+</extension> 
