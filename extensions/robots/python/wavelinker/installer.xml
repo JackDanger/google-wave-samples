@@ -1,0 +1,13 @@
+<extension 
+    name="Wave Linker"
+    description="Adds a button that automatically links the selected text to the first search result on google"
+    thumbnailUrl="http://wavelinker.appspot.com/preview.png">
+  <author name="Douwe Osinga"/>
+  <menuHook location="TOOLBAR" text="Create Autolink"
+      iconUrl="http://wavelinker.appspot.com/toolbaricon.png">
+    <annotateSelection key="robot.wavelinker.request" value="google"/>
+    <addParticipants>
+      <participant id="wavelinker@appspot.com"/>
+    </addParticipants>
+  </menuHook> 
+</extension> 

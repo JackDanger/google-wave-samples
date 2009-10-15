@@ -1,0 +1,25 @@
+application: wavelinker
+version: 2
+runtime: python
+api_version: 1
+
+handlers:
+- url: /installer.xml.*
+  static_files: installer.xml
+  upload: installer.xml
+  mime_type: text/xml
+
+- url: /avatar.png
+  static_files: avatar.png
+  upload: avatar.png
+
+- url: /preview.png
+  static_files: preview.png
+  upload: preview.png
+
+- url: /toolbaricon.png
+  static_files: toolbaricon.png
+  upload: toolbaricon.png
+
+- url: /_wave/.*
+  script: wavelinker.py
