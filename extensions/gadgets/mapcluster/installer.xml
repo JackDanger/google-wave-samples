@@ -1,6 +1,6 @@
 <extension 
     name="Map Cluster Gadget"
-    thumbnailUrl="http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/gadgets/mappy/screenshot_mapcluster.png"
+    thumbnailUrl="http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/gadgets/mapcluster/screenshot_mapcluster.png"
     description="Add your location to the map, and see where everyone else is from, using a cluster visualization.">
   <author name="Google"/>
   <menuHook location="TOOLBAR" text="Add Map Cluster Gadget"
