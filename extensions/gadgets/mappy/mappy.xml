@@ -6,7 +6,7 @@
   <UserPref name="selection" default_value="${selection}" datatype="string" />
   <Content type="html"><![CDATA[
 <head>
- <link type="text/css" href="http://imagine-it.org/google/wave/jqueryui/css/start/jquery-ui-1.7.2.custom.css" rel="stylesheet" /> 
+ <link type="text/css" href="http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/gadgets/mappy/jquery-ui-1.7.2.custom.css" rel="stylesheet" /> 
  <style type="text/css" media="screen">
    body { font-size:14px; font-family:Arial, sans serif;}
    #map { float:left; width:700px; height:500px; margin-top:10px; }
@@ -36,7 +36,7 @@
   google.load("jquery", "1.3");
   google.load("search", "1");
 </script>
-<script src="http://imagine-it.org/google/wave/jqueryui/js/jquery-ui-1.7.2.custom.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/gadgets/mappy/jquery-ui-1.7.2.custom.min.js" type="text/javascript" charset="utf-8"></script>
 <script language="JavaScript" src="http://www.geoplugin.net/javascript.gp" type="text/javascript"></script>
 <script type="text/javascript">
 
