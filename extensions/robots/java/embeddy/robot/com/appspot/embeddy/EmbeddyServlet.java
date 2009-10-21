@@ -6,14 +6,26 @@ import com.google.wave.api.*;
 public class EmbeddyServlet extends AbstractRobotServlet {
   @Override
   public void processEvents(RobotMessageBundle events) {
-    if (events.wasParticipantAddedToWave("embeddy@appspot.com")) {
-      Wavelet wavelet = events.getWavelet();
-      Gadget gadget =
-        new Gadget("http://embeddy.appspot.com/gadget/content.xml");
-      gadget.setField("id-defined", "'" + wavelet.getWaveId() + "'");
-      TextView text = wavelet.appendBlip().getDocument();
-      text.append("\n\n\n");
-      text.getGadgetView().append(gadget);
+    Gadget gadget;
+    Wavelet wavelet = events.getWavelet();
+    GadgetView gadgets = wavelet.getRootBlip().getDocument().getGadgetView();
+
+    for (Event event : events.getEvents()) {
+      switch (event.getType()) {
+        case WAVELET_SELF_ADDED:
+        gadget = new Gadget("http://embeddy.appspot.com/gadget/content.xml");
+        gadgets.append(gadget);
+        gadget.setField("id", "'" + wavelet.getWaveId() + "'");
+        break;
+
+        case DOCUMENT_CHANGED:
+        gadget =
+          gadgets.getGadget("http://embeddy.appspot.com/gadget/content.xml");
+
+        if (gadget != null && "true".equals(gadget.getField("is-closed"))) {
+          gadgets.delete(gadget);
+        }
+      }
     }
   }
 }

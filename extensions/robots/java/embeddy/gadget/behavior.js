@@ -6,10 +6,8 @@ function identify(element) {
 
 function getSelection(menu) { return menu.find(':selected'); }
 
-function evaluate(menu, selection) {
-  var name = menu.attr('name');
-  return $('.' + name.slice(0, name.indexOf('-') + 1) + 'evaluated').
-    text(selection.val());
+function evaluate(name, selection) {
+  return $('.' + name).text(selection.val());
 }
 
 function initialize(panel) {
@@ -29,6 +27,8 @@ function initialize(panel) {
       };
     });
 
+    var name = menu.attr('name');
+
     menu.change(function() {
       var selection = getSelection(menu);
       var id = identify(selection);
@@ -38,23 +38,26 @@ function initialize(panel) {
         'font-size': selection.css('font-size'),
         color: colors[id].text
       });
-      evaluate(menu, selection);
+      evaluate(name, selection);
     });
 
-    evaluate(menu, getSelection(menu)).css('font-style', 'normal');
+    evaluate(name, getSelection(menu)).css('font-style', 'normal');
   });
 }
 
 $(function() {
+  var isInWave = wave.isInWaveContainer();
   var io = $('#io').append('<div id="buffer" style="display: none" />');
   var buffer = $('#buffer');
 
-  if (wave.isInWaveContainer()) {
+  if (isInWave) {
+    var state;
+
     wave.setStateCallback(function() {
+      state = wave.getState();
       buffer.
-        html($('<select name="id-defined" />').
-          html($('<option selected="selected" />').
-            val(wave.getState().get('id-defined'))));
+        html($('<select name="id" />').
+          html($('<option selected="selected" />').val(state.get('id'))));
       initialize(io);
     });
   } else { initialize(io); }
@@ -69,5 +72,9 @@ $(function() {
     close.attr('src', 'http://embeddy.appspot.com/gadget/close.gif');
   });
 
-  io.submit(function() { return false; });
+  io.submit(function() {
+    if (isInWave) { state.submitValue('is-closed', 'true'); }
+
+    return false;
+  });
 });

@@ -9,8 +9,7 @@
     screenshot="http://embeddy.appspot.com/gadget/screenshot.png"
     thumbnail="http://embeddy.appspot.com/gadget/thumbnail.png"
     height="420">
-    <Require feature="rpc" />
-    <Require feature="wave-preview" />
+    <Require feature="wave" />
   </ModulePrefs>
   <Content type="html">
     <![CDATA[
@@ -36,7 +35,7 @@
                 type="image"
                 id="close"
                 src="http://embeddy.appspot.com/gadget/close.gif"
-                alt="Not implemented yet. Delete blip instead."
+                alt="Close"
                 tabindex="7"
               />
             </td>
@@ -48,7 +47,7 @@
             <tr>
               <td>Width:</td>
               <td>
-                <select class="dimensions" name="width-defined" tabindex="1">
+                <select class="dimensions" name="width" tabindex="1">
                   <option value="80px">80</option>
                   <option value="160px">160</option>
                   <option value="240px">240</option>
@@ -70,7 +69,7 @@
               </td>
               <td>Background color:</td>
               <td>
-                <select class="colors" name="background-defined" tabindex="3">
+                <select class="colors" name="background" tabindex="3">
                   <option
                     class="white default"
                     value="'white'"
@@ -96,7 +95,7 @@
               </td>
               <td>Font face:</td>
               <td>
-                <select class="font" name="face-defined" tabindex="5">
+                <select class="font" name="face" tabindex="5">
                   <option
                     class="arial default"
                     value="'Arial'"
@@ -127,7 +126,7 @@
             <tr>
               <td>Height:</td>
               <td>
-                <select class="dimensions" name="height-defined" tabindex="2">
+                <select class="dimensions" name="height" tabindex="2">
                   <option value="60px">60</option>
                   <option value="120px">120</option>
                   <option value="180px">180</option>
@@ -149,10 +148,7 @@
               </td>
               <td>Text color:</td>
               <td>
-                <select
-                  class="colors black default"
-                  name="text-defined"
-                  tabindex="4">
+                <select class="colors black default" name="text" tabindex="4">
                   <option class="white" value="'white'">white</option>
                   <option class="silver" value="'silver'">silver</option>
                   <option class="red" value="'red'">red</option>
@@ -178,7 +174,7 @@
               </td>
               <td>Font size:</td>
               <td>
-                <select class="font" name="size-defined" tabindex="6">
+                <select class="font" name="size" tabindex="6">
                   <option value="'8px'">8</option>
                   <option value="'9px'">9</option>
                   <option value="'10px'">10</option>
@@ -211,9 +207,8 @@
                 <p>Paste this snippet wherever you want the wave to show up:</p>
 
 <pre>
-&lt;div id="wave" style="width: <var
-  class="width-evaluated">width</var>; height: <var
-  class="height-evaluated">height</var>">&lt;/div>
+&lt;div id="wave" style="width: <var class="width">width</var>; height: <var
+  class="height">height</var>">&lt;/div>
 </pre>
 
                 <p>
@@ -230,11 +225,10 @@
 &lt;script type="text/javascript">
   var wave =
     new WavePanel('https://wave.google.com/a/wavesandbox.com/');
-  wave.setUIConfig(<var class="background-evaluated">bgcolor</var>, <var
-    class="text-evaluated">color</var>, <var
-    class="face-evaluated">font</var>, <var
-    class="size-evaluated">fontsize</var>);
-  wave.loadWave(<var class="id-evaluated">waveId</var>);
+  wave.setUIConfig(<var class="background">bgcolor</var>, <var
+    class="text">color</var>, <var class="face">font</var>, <var
+    class="size">fontsize</var>);
+  wave.loadWave(<var class="id">waveId</var>);
   wave.init(document.getElementById('wave'));
 &lt;/script>
 </pre>
