@@ -314,7 +314,7 @@ Mappy.prototype.removeEditingUI_ = function() {
     this.map_.removeControl(this.statusControl);
   }
   this.statusControl = new StatusControl();
-  this.map_.addControl(this.statusControl, new GControlPosition(G_ANCHOR_BOTTOM_LEFT, new GSize(60, 5)));
+  this.map_.addControl(this.statusControl, new GControlPosition(G_ANCHOR_BOTTOM_LEFT, new GSize(65, 5)));
   this.statusControl.setText('Now in view mode. To edit, place blip in edit mode (CTRL+E).');
 
   this.map_.disableGoogleBar();
