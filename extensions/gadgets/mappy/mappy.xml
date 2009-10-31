@@ -199,7 +199,7 @@ Mappy.prototype.createMap_ = function() {
   var me = this;
 
   this.map_ = new GMap2(this.dom_.mapDiv[0], {googleBarOptions:
-  {showOnLoad: true, onGenerateMarkerHtmlCallback : function(marker, html, result) {
+  {showOnLoad: true, resultList: G_GOOGLEBAR_RESULT_LIST_SUPPRESS, onGenerateMarkerHtmlCallback : function(marker, html, result) {
     return me.extendMarker_(me, marker, html, result);}}});
   this.map_.setCenter(new GLatLng(37, -122));
   
