@@ -1,0 +1,9 @@
+<extension name="Tricky" description="Go trick or treating inside a Wave." thumbnailUrl="http://tricky-bot.appspot.com/images/preview.png">
+  <version>2</version>
+  <author name="Pamela Fox" email="google-wave-api@googlegroups.com"/>
+  <menuHook location="NEW_WAVE_MENU" text="Go Trick or Treating!">
+    <createNewWave>
+      <participant id="tricky-bot@appspot.com" />
+    </createNewWave>
+  </menuHook>
+</extension>

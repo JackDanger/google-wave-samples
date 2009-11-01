@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Module>
+	<ModulePrefs title="tricky" height="257">
+		<Require feature="dynamic-height" />
+	</ModulePrefs>
+
+	<Content type="html">
+  <![CDATA[   
+  
+<style>
+body {
+  font-size: 12px;
+  color: gray;
+  font-family: georgia, arial;
+  background: black;
+}
+#debug {
+  font-size: 10px;
+  color: red;
+  text-align: left;
+  overflow: auto;
+  height: 100px;
+  border: 1px solid red;
+  padding: 3px;
+}
+#main {
+	padding: 5px;
+	border: 0px solid gray;
+	height: 100%;
+	width: 100%;
+}
+#pumpkin {
+	position: absolute;
+	top: 30%;
+	right: 50%;
+}
+
+</style>
+
+<script type="text/javascript" src="http://wave-api.appspot.com/public/wave.js"></script>
+<script type="text/javascript" src="http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/gadgets/mappy/jquery-1.3.2.min.js"></script>		
+
+<script type="text/javascript">
+
+	window.currentPumpkinsIndex = 0;
+
+	window.pumpkins = [		
+		'http://tricky-bot.appspot.com/images/pumpkin_oh.png',
+		'http://tricky-bot.appspot.com/images/pumpkin_wave.png',
+		'http://tricky-bot.appspot.com/images/pumpkin_woozy.png',
+		'http://tricky-bot.appspot.com/images/pumpkin_wicked.png',
+	];
+	
+	gadgets.util.registerOnLoadHandler(init);
+	
+	function init() {
+		initEventHandlers();						
+		if (wave && wave.isInWaveContainer()) {
+		    wave.setParticipantCallback(function() {
+		    	if (wave.getViewer() != null) {
+						var viewer = wave.getViewer();
+						debug('viewer id = ' + viewer.getId());
+						debug('host id = ' + wave.getHost().getId());		      			      
+		      }
+		      wave.setStateCallback(waveStateChanged);
+		    });				    		    
+		}	
+	}
+
+	function waveStateChanged() {
+		var keys = wave.getState().getKeys();
+		for (var i = 0; i < keys.length; i++) {
+			var key = keys[i];			
+			var value = get(key);
+		}
+	}
+	
+	function initDebugConsole() {
+		if (/.+__debugconsole__/.test(document.location.href)) {
+			jQuery('#debugConsole').css({display: 'block'});
+		} else {
+			jQuery('#debugConsole').css({display: 'none'});
+		}								
+	}
+	
+	function initEventHandlers() {
+		jQuery('#pumpkin').click(function() {
+			jQuery('#pumpkin').attr('src', window.pumpkins[window.currentPumpkinsIndex]);
+			window.currentPumpkinsIndex++;
+			
+			if (window.currentPumpkinsIndex >= window.pumpkins.length) {
+				window.currentPumpkinsIndex = 0;
+			}
+		});		
+		jQuery('#clear').click(function() {
+			jQuery('#debug').empty();
+		});	
+		jQuery('#reset').click(function() {
+			resetAllStates2();
+		});	
+		jQuery('#print').click(function() {
+			printAllStates();
+		});	
+	}
+	
+	function get(key) {
+		var ret = null;
+		if (window.wave) {
+			ret = wave.getState().get(key);
+		}
+		return ret;
+	}
+	
+	function set(key, value) {
+		var obj = {};
+		obj[key] = value;
+		if (window.wave) {
+			wave.getState().submitDelta(obj);
+		}
+	}
+	
+	function rm(key) {
+		var obj = {};
+		obj[key] = null;
+		if (window.wave) {
+			wave.getState().submitDelta(obj);
+		}
+	}
+
+	function printAllStates() {
+	
+		if (!window.wave) {
+			return;
+		}
+	
+		var html = [];
+	
+		var keys = wave.getState().getKeys();
+	
+		for ( var i = 0; i < keys.length; ++i) {
+			var key = keys[i];
+			var value = wave.getState().get(key);
+	
+			html.push(key + ' = ' + value);
+			html.push('<br>');
+		}
+	
+		debug(html.join(''));
+	}
+	
+	function resetAllStates() {
+	
+	  if (window.wave) {
+	  	
+	  	var obj = {};
+	    
+	    var keys = wave.getState().getKeys();
+	
+	    for (var i = 0; i < keys.length; i++) {
+	    	var key = keys[i];
+	    	obj[key] = null;
+	    }
+	   
+	    debug(JSON.stringify(obj));
+	
+	    wave.getState().submitDelta(obj);
+	  }    
+	
+	}
+	
+	function debug(msg) {
+		jQuery('#debug').prepend(msg + '<br/>');
+	}
+
+	function getSelfUrl() {
+	  var protocol = document.location.protocol;
+	  var host = document.location.host;
+	  return protocol + '//' + host;
+	}
+
+</script>
+
+<div align="center">
+	<div id="main">
+	  <a href="javascript:void(0);"><img border="0" id="pumpkin" src="http://tricky-bot.appspot.com/images/pumpkin_wicked.png"></a>
+    <img id="porch" src="http://tricky-bot.appspot.com/images/porch.png">
+	</div>
+	<div style="display: none;">
+	 <img id="pumpkin" src="http://tricky-bot.appspot.com/images/pumpkin_oh.png">
+	 <img id="pumpkin" src="http://tricky-bot.appspot.com/images/pumpkin_wave.png">
+	 <img id="pumpkin" src="http://tricky-bot.appspot.com/images/pumpkin_woozy.png">
+  </div>
+</div>
+  ]]>
+	</Content>
+</Module>

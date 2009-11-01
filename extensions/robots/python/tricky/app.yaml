@@ -1,0 +1,27 @@
+application: tricky-bot
+version: 1
+runtime: python
+api_version: 1
+
+
+handlers:
+- url: /images
+  static_dir: images
+
+- url: /
+  static_files: index.html
+  upload: index.html
+  mime_type: text/html
+
+- url: /installer.xml.*
+  static_files: installer.xml
+  upload: installer.xml
+  mime_type: text/xml
+
+- url: /gadget.xml.*
+  static_files: gadget.xml
+  upload: gadget.xml
+  mime_type: text/xml
+
+- url: /_wave/.*
+  script: wave.py
