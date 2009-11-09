@@ -1,4 +1,3 @@
-// Copyright 2009 Google Inc. All Rights Reserved.
 package com.google.wave.extensions.tweety.util;
 
 import javax.jdo.JDOHelper;

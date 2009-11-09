@@ -1,4 +1,3 @@
-// Copyright 2009 Google Inc. All Rights Reserved.
 package com.google.wave.extensions.tweety.model;
 
 import java.util.List;
