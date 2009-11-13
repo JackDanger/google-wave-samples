@@ -564,7 +564,7 @@ Mappy.prototype.createTableRow_ = function(label, value, is_input, geometry, isF
 
 Mappy.prototype.createView_ = function(geometry, parent_div) {
   var me = this;
-  var div = $('<div>').addClass('sidebarview').html('<b><span id="' + Mappy.getIdForGeometryField(geometry, 'name') + '">' + geometry.data.name + '</span></b><br><span id="' + Mappy.getIdForGeometryField(geometry, 'description') + '">' + geometry.data.description + '</span><br>' + '<em><span class="byline">' + 'Created by: ' + geometry.data.userId + '</span></em>');
+  var div = $('<div>').addClass('sidebarview').html('<b><span id="' + Mappy.getIdForGeometryField(geometry, 'name') + '">' + gadgets.util.escapeString(geometry.data.name) + '</span></b><br><span id="' + Mappy.getIdForGeometryField(geometry, 'description') + '">' + gadgets.util.escapeString(geometry.data.description) + '</span><br>' + '<em><span class="byline">' + 'Created by: ' + geometry.data.userId + '</span></em>');
   return div[0];
 }
 
