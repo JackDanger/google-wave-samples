@@ -1,9 +1,14 @@
-application: spammmybot
+application: exporty-bot 
 version: 1
 runtime: python
 api_version: 1
 
 handlers:
+- url: /avatar.png
+  static_files: avatar.png
+  upload: avatar.png
+  mime_type: image/png
+
 - url: /_wave/.*
   script: wave.py
 

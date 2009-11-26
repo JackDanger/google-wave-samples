@@ -38,7 +38,7 @@ class MainPage(webapp.RequestHandler):
       if canDisplayWave:
         template_values = {
           'title': result.title,
-          'body': result.body.replace('\n', '<br/>'),
+          'body': result.body,
           'id': waveId,
           'url': 'https://wave.google.com/a/wavesandbox.com/#minimized:nav,minimized:contact,minimized:search,restored:wave:' + waveId.replace('+', '%252B')
         }
@@ -49,7 +49,13 @@ class MainPage(webapp.RequestHandler):
           'id': waveId
         }
 
-    path = os.path.join(os.path.dirname(__file__), 'export.html')
+    format = self.request.get('template')
+    if format and format == 'xml':
+      filename = 'export.xml'
+    else:
+      filename = 'export.html'
+
+    path = os.path.join(os.path.dirname(__file__), filename)
     self.response.out.write(template.render(path, template_values))
 
 application = webapp.WSGIApplication(
