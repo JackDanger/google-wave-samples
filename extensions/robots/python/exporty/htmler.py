@@ -1,13 +1,5 @@
 #!/usr/bin/python2.4
 #
-# Copyright 2009 Google Inc. All Rights Reserved.
-
-"""One-line documentation for htmler module.
-
-A detailed description of htmler.
-"""
-
-__author__ = 'pamelafox@google.com (Pamela Fox)'
 
 import logging
 import re
