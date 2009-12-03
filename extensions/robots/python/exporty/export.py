@@ -38,6 +38,7 @@ class MainPage(webapp.RequestHandler):
       if canDisplayWave:
         template_values = {
           'title': result.title,
+          'html': result.html,
           'body': result.body,
           'id': waveId,
           'url': 'https://wave.google.com/a/wavesandbox.com/#minimized:nav,minimized:contact,minimized:search,restored:wave:' + waveId.replace('+', '%252B')
@@ -58,6 +59,7 @@ class MainPage(webapp.RequestHandler):
     path = os.path.join(os.path.dirname(__file__), filename)
     self.response.out.write(template.render(path, template_values))
 
+  
 application = webapp.WSGIApplication(
                                      [('/export', MainPage)],
                                      debug=True)

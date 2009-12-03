@@ -6,6 +6,7 @@ from google.appengine.ext import db
 import logging
 import os
 import models
+import htmler
 
 def logString(context, string):
   logging.info(string)
@@ -23,7 +24,8 @@ def OnRobotAdded(properties, context):
 def exportRootBlip(context):
   rootWavelet = context.GetRootWavelet()
   rootBlip = context.GetBlipById(rootWavelet.GetRootBlipId())
-
+  html = htmler.convert_to_html(rootBlip)
+  
   title = rootWavelet.GetTitle()
   id = rootWavelet.GetWaveId()
   body = rootBlip.GetDocument().GetText().split('\n', 1)[1]
@@ -39,6 +41,7 @@ def exportRootBlip(context):
   waveExport.id = id
   waveExport.title = title
   waveExport.body = body
+  waveExport.html = html
   waveExport.participants = [p for p in rootWavelet.GetParticipants()]
   waveExport.put()
 

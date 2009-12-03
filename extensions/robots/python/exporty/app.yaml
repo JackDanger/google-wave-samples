@@ -1,9 +1,14 @@
 application: exporty-bot 
-version: 1
+version: 2
 runtime: python
 api_version: 1
 
 handlers:
+- url: /localdebug.html
+  static_files: localdebug.html
+  upload: localdebug.html
+  mime_type: text/html
+
 - url: /avatar.png
   static_files: avatar.png
   upload: avatar.png
