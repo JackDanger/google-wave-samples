@@ -1,0 +1,15 @@
+application: supasmiley-bot
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+
+- url: /gadget.xml.*
+  static_files: gadget.xml
+  upload: gadget.xml
+  mime_type: text/xml
+
+- url: /_wave/.*
+  script: smiley.py
+

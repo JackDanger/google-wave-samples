@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+  <ModulePrefs title="Smiley" height="20" width="20">
+  </ModulePrefs>
+  <Content type="html">
+  <![CDATA[
+<a title='I love You - smiley icons, smiley dictionary and smiley clipart' href='http://www.sweetimsmiley.com/material_page.php?Key=125&CategoryKey=2'>
+<object width='20' height='20' classid='clsid:d27cdb6e-ae6d-11cf-96b8-444553540000' codebase='http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0'>
+              <param name='movie' value='http://media2.sweetimsmiley.com/emoticons/beatingheart.swf' />
+              <param name='bgcolor' value='white' />
+              <param name='quality' value='high' />
+            </object></a>
+  ]]>
+  </Content>
+</Module>
