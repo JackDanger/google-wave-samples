@@ -917,9 +917,10 @@ SharedMapControl.prototype.getDefaultPosition = function() {
     });
   }
   google.setOnLoadCallback(initialize);
+  //TODO: Reinstate GUnload once Chrome bug fixed
 </script>
 </head>
-<body onload="" onunload="GUnload()">
+<body onload="">
   <center>
   <div id="map_canvas" style="width: 95%; height: 100%"></div>
 
