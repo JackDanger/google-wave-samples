@@ -1,0 +1,97 @@
+<Module>
+<ModulePrefs 
+  title="Twitter Shared Search Gadget"
+  width="470"
+  height="400">
+  <Require feature="wave" />    
+  <Require feature="locked-domain" />
+  <Require feature="dynamic-height" />
+</ModulePrefs>
+<Content type="html"><![CDATA[
+<div id="viewDiv" style="display:none"></div>
+<div id="editDiv" style="display:none">
+<input type="text" value=":)" id="searchInput">
+<input type="submit" value="Change Search" onclick="updateState()"/>
+</div>
+// Note: The JS methods called on the Twitter method in this code
+// are not officially documented by Twitter and are subject to change.
+// Use them at your own risk.
+<script src="http://widgets.twimg.com/j/2/widget.js"></script>
+<script type="text/javascript">
+var twit;
+var searchVal = 'test';
+
+function initialize() {
+  renderGadget();
+  wave.setStateCallback(receiveState, this);
+  wave.setModeCallback(receiveMode, this);
+}
+      
+function receiveState(state) {
+  var oldSearchVal = searchVal;
+  searchVal = wave.getState().get('search');
+  if (searchVal && searchVal != oldSearchVal) {
+    twit.destroy();
+    twit.setSearch(searchVal);
+    twit.start();
+    document.getElementById("viewDiv").innerHTML = "Searching for: " + searchVal;
+    document.getElementById("searchInput").value = searchVal;
+  }
+}
+      
+function receiveMode(mode) {
+  var modeStr = "UNKNOWN";
+  switch (mode) {
+    case wave.Mode.EDIT: 
+      document.getElementById("editDiv").style.display = "block";
+      document.getElementById("viewDiv").style.display = "none";
+      break;
+    case wave.Mode.VIEW: 
+      document.getElementById("editDiv").style.display = "none";
+      document.getElementById("viewDiv").style.display = "block";
+      break;
+  }
+} 
+        
+function updateState() {
+  var searchVal = document.getElementById('searchInput').value;
+  wave.getState().submitDelta({'search': searchVal});
+}
+
+function renderGadget() {    
+  twit = new TWTR.Widget({
+  version: 2,
+  type: 'search',
+  search: searchVal,
+  interval: 6000,
+  title: '',
+  subject: '',
+  width: 450,
+  height: 300,
+  theme: {
+    shell: {
+      background: '#8ec1da',
+      color: '#ffffff'
+    },
+    tweets: {
+      background: '#ffffff',
+      color: '#444444',
+      links: '#1985b5'
+    }
+  },
+  features: {
+    scrollbar: true,
+    loop: true,
+    live: true,
+    hashtags: true,
+    timestamp: true,
+    avatars: true,
+    behavior: 'default'
+  }
+}).render().start();    
+}
+
+gadgets.util.registerOnLoadHandler(initialize);  
+</script>
+]]></Content>
+</Module>
