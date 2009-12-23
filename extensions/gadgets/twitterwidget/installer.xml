@@ -1,0 +1,9 @@
+<extension
+    name="Twitter Search"
+    description="Shows results from Twitter for a given search term. Users can edit to specify new term."
+    thumbnailUrl="http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/gadgets/twitterwidget/thumbnail.png">
+  <author name="Google"/>
+  <menuHook location="TOOLBAR" text="Insert Twitter search gadget" iconUrl="http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/gadgets/twitterwidget/icon.jpg">
+    <insertGadget url="http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/gadgets/twitterwidget/twitterwidget.xml"/>
+  </menuHook>
+</extension>

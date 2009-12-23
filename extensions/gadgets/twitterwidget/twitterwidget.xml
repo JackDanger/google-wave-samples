@@ -19,7 +19,7 @@
 // are not officially documented by Twitter and are subject to change.
 // Use them at your own risk.
 var twit;
-var searchVal = 'test';
+var searchVal = ':)';
 
 function initialize() {
   renderGadget();
