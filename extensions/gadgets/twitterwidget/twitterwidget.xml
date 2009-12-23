@@ -13,11 +13,11 @@
 <input type="text" value=":)" id="searchInput">
 <input type="submit" value="Change Search" onclick="updateState()"/>
 </div>
+<script src="http://widgets.twimg.com/j/2/widget.js"></script>
+<script type="text/javascript">
 // Note: The JS methods called on the Twitter method in this code
 // are not officially documented by Twitter and are subject to change.
 // Use them at your own risk.
-<script src="http://widgets.twimg.com/j/2/widget.js"></script>
-<script type="text/javascript">
 var twit;
 var searchVal = 'test';
 
