@@ -8,7 +8,6 @@ def log(message, string):
   logging.info(message + ": " + string)
 
 def convert_to_css_property(annotation_name):
-  log("convert_to_css", "")
   split_annotation = annotation_name.split('/')
   style_type = split_annotation[1]
   css_rule = re.sub(r'([A-Z])','-\\1', style_type, 1)
@@ -23,7 +22,6 @@ def convert_to_html(blip):
   while i < len(text):
     indices.insert(i, {"index": i, "character": text[i], "linkStarts": [], "linkEnds": [], "annotationStarts": [], "annotationEnds": []})
     i += 1
-    log('char: ', str(i))
   annotations = blip.GetAnnotations()
   for annotation in annotations:
     range = annotation.range
@@ -31,11 +29,11 @@ def convert_to_html(blip):
       #only process these for now
       css_rule = convert_to_css_property(annotation.name)
       indices[range.start]["annotationStarts"].append(annotation)
-      indices[range.end]["annotationEnds"].append(annotation)
+      indices[min(range.end, len(text)-1)]["annotationEnds"].append(annotation)
     if "link" in annotation.name:
       log("found link", annotation.value)
       indices[range.start]["linkStarts"].append(annotation)
-      indices[range.end]["linkEnds"].append(annotation)
+      indices[min(range.end, len(text) -1)]["linkEnds"].append(annotation)
 
   html = ""
   active_annotations = []
