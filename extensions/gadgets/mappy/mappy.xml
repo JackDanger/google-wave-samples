@@ -189,11 +189,12 @@ Mappy.prototype.isUserLoggedIn_ = function() {
 
 Mappy.getIconHTML = function(type) {
     switch (type) {
-     case "plus"   : iconClass = 'ui-icon-circle-plus'; break;
-     case "minus"  : iconClass = 'ui-icon-circle-minus'; break;
-     case "close" : iconClass = 'ui-icon-closethick'; break;
+     case "plus"   : iconClass = 'ui-icon-circle-plus'; title = 'Zoom in'; break;
+     case "minus"  : iconClass = 'ui-icon-circle-minus'; title = 'Zoom out'; break;
+     case "close" : iconClass = 'ui-icon-closethick'; title = 'Close'; break;
+     case "zoomall" : iconClass = 'ui-icon-arrow-4-diag'; title = 'Zoom to fit all'; break;
     }
-    return '<div class="icon ui-state-default ui-corner-all"><span class="ui-icon '+iconClass+'" /></div>';
+    return '<div class="icon ui-state-default ui-corner-all" title="' + title + '"><span class="ui-icon '+iconClass+'" /></div>';
 }
 
 Mappy.prototype.createMap_ = function() {
@@ -205,6 +206,13 @@ Mappy.prototype.createMap_ = function() {
   this.map_.setCenter(new GLatLng(37, -122));
   
   $("#dropdown").appendTo(this.dom_.mapDiv).css({ top: '30px', left: '12px' }).show();
+
+  $(Mappy.getIconHTML("zoomall"))
+          .css({ top:'12px', left:'78px' })
+          .click(function(){
+            me.zoomAll_();
+          })
+          .appendTo(this.dom_.mapDiv);
 
   $(Mappy.getIconHTML("plus"))
           .css({ top:'12px', left:'12px' })
@@ -294,9 +302,65 @@ Mappy.prototype.createMap_ = function() {
       }
       me.sharedMapControl_.updateMap(me.sharedCenter_, me.sharedZoom_, me.sharedMapType);
     }
+    if (inEditing()) {
+      me.checkBounds_();
+    }
+  });
+  GEvent.addListener(this.map_, 'moveend', function() {
+    if (inEditing()) {
+      me.checkBounds_();
+    }
   });
   modeSwitch();
 };
+
+Mappy.prototype.checkBounds_ = function() {
+  var me = this;
+  var uncontained = 0;
+  var total = 0;
+  var bounds = me.map_.getBounds();
+  for (var geometryKey in me.geometries_) {
+    var overlay = me.geometries_[geometryKey].overlay;
+    if (overlay instanceof GMarker) {
+      if (!bounds.containsLatLng(overlay.getLatLng())) {
+        uncontained++;
+      }
+    } else {
+      if (!bounds.containsBounds(overlay.getBounds())) {
+        uncontained++;
+      }
+    }
+    total++;
+  }
+  if (uncontained > 0) {
+    me.statusControl.setText('Warning: ' + uncontained + ' overlay(s) are outside viewport.');
+  }
+}
+
+Mappy.prototype.zoomAll_ = function() {
+  var me = this;
+  var bounds = me.getBoundsForAll_();
+  if (!bounds.isEmpty()) {
+    me.map_.setCenter(bounds.getCenter());
+    me.map_.setZoom(me.map_.getBoundsZoomLevel(bounds)-1);
+  }
+}
+
+Mappy.prototype.getBoundsForAll_ = function() {
+  var me = this;
+  var bounds = new GLatLngBounds();
+  for (var geometryKey in me.geometries_) {
+    var overlay = me.geometries_[geometryKey].overlay;
+    if (overlay instanceof GMarker) {
+      bounds.extend(overlay.getLatLng());
+    } else {
+      bounds.extend(overlay.getBounds().getSouthWest());
+      bounds.extend(overlay.getBounds().getNorthEast());
+    }
+  }
+  return bounds;
+}
+
 
 Mappy.prototype.saveCenter = function() {
   var me = this;
@@ -410,6 +474,7 @@ Mappy.getLatLngForGeometry_ = function(geometry) {
     return geometry.overlay.getBounds().getCenter();
   }
 }
+
 Mappy.stealClick_ = function(e) {
   if(navigator.userAgent.toLowerCase().indexOf('msie') != -1 && document.all) {
     window.event.cancelBubble = true;
@@ -851,7 +916,7 @@ SharedMapControl.prototype.updateMap = function(center, zoom, maptype) {
 }
 
 SharedMapControl.prototype.getDefaultPosition = function() {
-  return new GControlPosition(G_ANCHOR_TOP_LEFT, new GSize(75, 12));
+  return new GControlPosition(G_ANCHOR_TOP_LEFT, new GSize(110, 5));
 }
 
   function executeSearch(query) {
