@@ -334,6 +334,8 @@ Mappy.prototype.checkBounds_ = function() {
   }
   if (uncontained > 0) {
     me.statusControl.setText('Warning: ' + uncontained + ' overlay(s) are outside viewport.');
+  } else {
+    me.resetStatusText_();
   }
 }
 
@@ -404,33 +406,50 @@ Mappy.prototype.addEditingUI_ = function() {
   this.statusControl = new StatusControl();
   this.map_.addControl(this.statusControl);
   edit_control = this.editControl;
-  status_control = this.statusControl;
   this.map_.enableGoogleBar();
-
   GEvent.addListener(edit_control, 'view', function() {
     me.mode_ = 'view';
     me.editingNow = false;
-    status_control.setText('Select geometries by clicking on them.');
+    me.resetStatusText_();
   });
   GEvent.addListener(edit_control, 'point', function() {
     me.mode_ = 'point';
     me.editingNow = false;
-    status_control.setText('Click on the map to create a new marker.');
+    me.resetStatusText_();
   });
   GEvent.addListener(edit_control, 'line', function() {
     me.mode_ = 'line';
     me.editingNow = false;
-    status_control.setText('Click on the map to start creating a new line.');
+    me.resetStatusText_();
   });
   GEvent.addListener(edit_control, 'poly', function() {
     me.mode_ = 'poly';
     me.editingNow = false;
-    status_control.setText('Click on the map to start creating a new filled poly.');
+    me.resetStatusText_();
   });
+  GEvent.trigger(edit_control, 'view');
   for (var i = 0; i < me.dom_.markerDivs.length; i++) {
     GEvent.trigger(me.dom_.markerDivs[i], 'enableedit');
   } 
 }
+
+Mappy.prototype.resetStatusText_ = function() {
+  var me = this;
+  switch (me.mode_) {
+    case 'view':
+      me.statusControl.setText('Select geometries by clicking on them.');
+      break;
+    case 'point':
+      me.statusControl.setText('Click on the map to create a new marker.');
+      break;
+    case 'line':
+      me.statusControl.setText('Click on the map to start creating a new line.');
+      break;
+    case 'poly':
+      me.statusControl.setText('Click on the map to start creating a new filled poly.');
+      break;
+  }
+};
 
 Mappy.prototype.updateHighlightPoly_ = function() {
   return;
