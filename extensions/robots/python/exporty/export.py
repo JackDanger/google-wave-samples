@@ -34,6 +34,11 @@ class MainPage(webapp.RequestHandler):
         sandboxEmail = user.email().replace('@gmail.com', '@wavesandbox.com')
         if sandboxEmail in participants:
           canDisplayWave = True
+      id_domain = waveId.split('!')[0]
+      if id_domain == 'googlewave.com':
+        dir = 'wave/'
+      else:
+        dir = 'a/' + id_domain + '/'
 
       if canDisplayWave:
         template_values = {
@@ -41,7 +46,8 @@ class MainPage(webapp.RequestHandler):
           'html': result.html,
           'body': result.body,
           'id': waveId,
-          'url': 'https://wave.google.com/a/wavesandbox.com/#minimized:nav,minimized:contact,minimized:search,restored:wave:' + waveId.replace('+', '%252B')
+          'dir': dir,
+          'url': 'https://wave.google.com/' + dir + '#minimized:nav,minimized:contact,minimized:search,restored:wave:' + waveId.replace('+', '%252B')
         }
       else:
         template_values = {
