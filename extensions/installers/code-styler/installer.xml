@@ -1,0 +1,8 @@
+<extension name="Code Styler" description="Convert selected text to fixed-width font."
+  thumbnailUrl="http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/installers/code-styler/thumbnail.png">
+ <author name="Pamela Fox" email="wave-api-support@google.com"/>
+ <menuHook location="TOOLBAR" text="Format as code"
+   iconUrl="http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/installers/code-styler/icon.png">
+  <annotateSelection key="style/fontFamily" value="monospace"/>
+ </menuHook>
+</extension>
