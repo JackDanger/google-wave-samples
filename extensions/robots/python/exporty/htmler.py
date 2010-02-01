@@ -3,6 +3,7 @@
 
 import logging
 import re
+import cgi
 
 def log(message, string):
   logging.info(message + ": " + string)
@@ -20,7 +21,7 @@ def convert_to_html(blip):
   text = blip.GetDocument().GetText()
   i = 0
   while i < len(text):
-    indices.insert(i, {"index": i, "character": text[i], "linkStarts": [], "linkEnds": [], "annotationStarts": [], "annotationEnds": []})
+    indices.insert(i, {"index": i, "character": cgi.escape(text[i]), "linkStarts": [], "linkEnds": [], "annotationStarts": [], "annotationEnds": []})
     i += 1
   annotations = blip.GetAnnotations()
   for annotation in annotations:

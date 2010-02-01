@@ -25,7 +25,7 @@ def exportRootBlip(context):
   rootWavelet = context.GetRootWavelet()
   rootBlip = context.GetBlipById(rootWavelet.GetRootBlipId())
   html = htmler.convert_to_html(rootBlip)
-  
+
   title = rootWavelet.GetTitle()
   id = rootWavelet.GetWaveId()
   body = rootBlip.GetDocument().GetText().split('\n', 1)[1]
