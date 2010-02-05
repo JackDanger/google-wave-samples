@@ -1,0 +1,87 @@
+<script>
+function init() {
+  wrappy.ui.convertButtons();
+  wrappy.window.adjustHeight();
+}
+wrappy.util.registerOnLoad(init);
+</script>
+<form id="admin_form">
+<table>
+ <tr>
+  <td>
+   <label for="conf_name">Conference Name</label>
+  </td>
+  <td>
+    <input type="text" name="conf_name">
+  </td>
+ </tr>
+ <tr>
+  <td>
+    <label for="groups">Group(s) to add</label><br>
+    <span style="font-size:x-small">(comma separated)</span>
+  </td>
+  <td>
+    <input type="text" name="groups">
+  </td>
+ </tr>
+ <tr>
+  <td>
+   <label for="tags">Tag(s) to add</label><br>
+    <span style="font-size:x-small">(comma separated)</span>
+  </td>
+  <td>
+   <input type="text" name="tags">
+  </td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>
+   <input type="checkbox" name="public">
+   Make waves public
+  </td>
+ </tr>
+ <tr><td colspan="2"><div class="divider"></div></td></tr></tr>
+ <tr>
+  <td>
+    <label for="template">Session Template</label>
+  </td>
+  <td>
+    <input type="text" name="templates">
+  </td>
+ </tr>
+ <tr><td colspan="2"><div class="divider"></div></td></tr></tr>
+ <tr>
+  <td>
+   <label for="datasource">Data Source</label>
+  </td>
+  <td>
+   <select name="datasource">
+     <option name="spreadsheet">Spreadsheet</option>
+     <option name="dapper">Dapper</option>
+   </select>
+  </td>
+  </tr>
+  <tr>
+   <td>
+    <label for="url">URL</label>
+   </td>
+   <td>
+    <input type="text" name="url">
+   </td>
+  </tr>
+  <tr>
+   <td>
+     <label>Preview</label>
+   </td>
+   <td>
+     <div id="preview">(Enter source first)</div>
+   </td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><input type="button" value="Create Conference Waves"><br>
+        <input type="button" value="Nuke Waves (Start Over">
+    </td>
+  </tr>
+</table>
+</form>

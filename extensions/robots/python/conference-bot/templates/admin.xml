@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<Module>
+<ModulePrefs title="Admin" height="60">
+  <Require feature="wave" /> 
+  <Require feature="dynamic-height" /> 
+</ModulePrefs>
+<Content type="html">
+<![CDATA[ 
+    <script src="{{server}}/js/util.js"></script>
+    <script type="text/javascript">
+    function onStateCallback() {
+//      wrappy.io.updateForm(form, formData);
+    }
+    function init() {
+      if (wave && wave.isInWaveContainer()) {
+        wave.setStateCallback(onStateCallback);
+        wrappy.io.waveEnableForm(document.getElementById('admin_form'));
+      }
+    }
+    gadgets.util.registerOnLoadHandler(init);
+    </script>
+    {% include "_admin_form.html" %}
+  ]]> 
+  </Content>
+</Module>

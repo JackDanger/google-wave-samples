@@ -1,0 +1,19 @@
+application: lca2010-bot
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /_wave/.*
+  script: wave.py
+
+- url: /web/.*
+  script: web.py
+
+- url: /js
+  static_dir: js
+
+- url: /installer.xml.*
+  static_files: installer.xml
+  upload: installer.xml
+  mime_type: text/xml
