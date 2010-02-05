@@ -1,12 +1,6 @@
 #!/usr/bin/python2.5
 #
-# Copyright 2009 Google Inc. All Rights Reserved.
-"""Implementation of the Everything and the Kitchen Sink bot
-
-This robot exercises our API by inserting a gadget that does embedding.
-"""
-
-__author__ = 'douwe@google.com (Douwe Osinga)'
+# Copyright 2009 Google Inc. Apache License 2.0
 
 import cgi
 import logging
