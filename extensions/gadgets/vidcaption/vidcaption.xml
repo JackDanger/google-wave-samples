@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<Module>
+<ModulePrefs title="State Example" height="700">
+  <Require feature="wave" /> 
+</ModulePrefs>
+<Content type="html">
+<![CDATA[ 
+      <ul id="markslist"></ul>
+      <video width="400" height="326" id="video" src="http://www.double.co.nz/video_test/virtual_barber_shop.ogg" controls>       
+        <p>Your browser does not support HTML5 Ogg vieo.</p>
+      </video>
+      <br/>
+      <input type="button" value="Add Marker Here" onclick="addMark()"/>
+<style>
+.time {
+  width: 60px;
+  display: inline-block;
+  text-align: right;
+  font-family: Courier, monospace;
+}
+</style>
+      <script>
+var vid, markslist;
+var marks = {};
+var inWave = false;
+
+function init() {
+  vid = document.getElementById('video');
+  markslist = document.getElementById('markslist');
+  if (wave && wave.isInWaveContainer()) {
+    inWave = true;
+    wave.setStateCallback(renderMarks);
+  }
+}
+
+function addMark() {
+  var markTime = vid.currentTime.toFixed(2) + '';
+
+  if (inWave) {
+    wave.getState().submitValue(markTime, '.');
+  } else {
+    marks[time] = '';
+    renderMarks();
+  }
+}
+
+function renderMarks() {
+  if (inWave) {
+    marks = {};
+    var keys = wave.getState().getKeys();
+    for (var i = 0; i < keys.length; i++) {
+      var key = keys[i];
+      marks[key] = wave.getState().get(key);
+    }
+  }
+  for (var markTime in marks) {
+    createOrUpdateMarker(markTime);
+  }
+}
+
+function changeMarkText(input, markTime) {
+  if (inWave) {
+    wave.getState().submitValue(markTime, input.value);
+  } else {
+    marks[markTime] = input.value;
+  }
+}
+
+function createOrUpdateMarker(markTime) {
+  var id = markTime + 'li';
+  var li = document.getElementById(id);
+  if (!li) {
+    li = document.createElement('li');
+    li.id = markTime + 'li';
+    li.innerHTML = '<span class="time">' + markTime + '</span>';
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.value = marks[markTime];
+    input.onchange = function() {
+      changeMarkText(input, markTime);
+    };
+    input.onkeyup = function() {
+      changeMarkText(input, markTime);
+    };
+    var button = document.createElement('input');
+    button.type = 'button';
+    button.value = 'Play';
+    button.onclick = function() {
+      vid.currentTime = markTime;
+      vid.play();
+    };
+    li.appendChild(input);
+    li.appendChild(button);
+    markslist.appendChild(li);
+  } else {
+    // Just update stuff
+    // todo: Check if user has focus in it first
+    var input = li.getElementsByTagName('input')[0]
+    input.value = marks[markTime];
+  }
+}
+
+gadgets.util.registerOnLoadHandler(init);
+</script>
+  ]]> 
+  </Content>
+</Module>
+
