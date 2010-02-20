@@ -3,7 +3,7 @@ package com.appspot.embeddy;
 import com.google.wave.api.*;
 
 @SuppressWarnings("serial")
-public class EmbeddyServlet extends AbstractRobotServlet {
+public class Robot extends AbstractRobotServlet {
   @Override
   public void processEvents(RobotMessageBundle events) {
     Gadget gadget;
