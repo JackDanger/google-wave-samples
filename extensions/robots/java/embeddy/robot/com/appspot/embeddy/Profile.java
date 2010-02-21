@@ -2,6 +2,7 @@ package com.appspot.embeddy;
 
 import com.google.wave.api.ProfileServlet;
 
+@SuppressWarnings("serial")
 public class Profile extends ProfileServlet {
   @Override
   public String getRobotAvatarUrl() {
