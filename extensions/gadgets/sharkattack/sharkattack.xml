@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+  <ModulePrefs title="Mappy" height="410">
+    <Require feature="wave" />
+    <Require feature="setprefs" />
+    <Require feature="locked-domain" />
+  </ModulePrefs>
+  <UserPref name="selection" default_value="${selection}" datatype="string" />
+  <Content type="html"><![CDATA[
+<head>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script> 
+<script type="text/javascript"> 
+var map, shark;
+var popTimer;
+var liveSharkIcon = new google.maps.MarkerImage(
+      'http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/gadgets/sharkattack/shark_alive.png',
+      new google.maps.Size(105, 100),
+      new google.maps.Point(0, 0),
+      new google.maps.Point(50, 50));
+var deadSharkIcon = new google.maps.MarkerImage(
+      'http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/gadgets/sharkattack/shark_dead.png',
+      new google.maps.Size(105, 100),
+      new google.maps.Point(0, 0),
+      new google.maps.Point(50, 50));
+
+function initialize() {
+  var myLatlng = new google.maps.LatLng(23.661506, -77.95555);
+  var myOptions = {
+    zoom: 12,
+    center: myLatlng,
+    mapTypeId: google.maps.MapTypeId.SATELLITE
+  }
+ 
+  map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+  // check state
+  wave.setStateCallback(processState);
+}
+
+function processState() {
+  var sharkStatus = wave.getState().get('shark-status');
+  if (!sharkStatus) {
+    // Wait until we know the bounds to add the shark
+    google.maps.event.addListenerOnce(map, 'bounds_changed', function() {
+      addLiveShark();
+      submitSharkStatus('alive');
+     });
+  }
+  if (sharkStatus) {
+    var sharkLatlng = wave.getState().get('shark-latlng');
+    sharkLatlng = JSON.parse(sharkLatlng);
+    latlng = new google.maps.LatLng(sharkLatlng[0], sharkLatlng[1]);
+    if (sharkStatus == 'alive') {
+      if (!shark) {
+        addLiveShark(latlng);
+      }
+    }
+    if (sharkStatus == 'dead') {
+      if (!shark) {
+        addDeadShark(latlng);
+      } else {
+        shark.setIcon(deadSharkIcon);
+        window.clearInterval(popTimer);
+      }
+    }
+  }
+}
+
+
+function addLiveShark(latlng) {
+  shark = new google.maps.Marker({
+    position: latlng || getRandomLatLng(),
+    map: map,
+    icon: liveSharkIcon
+  });
+  google.maps.event.addListener(shark, 'click', processSharkClick);
+  popTimer = window.setInterval(popShark, 500);
+}
+
+function addDeadShark(latlng) {
+  shark = new google.maps.Marker({
+    position: latlng,
+    map: map,
+    icon: deadSharkIcon
+  });
+}
+
+function popShark() {
+  shark.setVisible(!shark.getVisible());
+}
+
+function processSharkClick() {
+  // Make it dead
+  shark.setIcon(deadSharkIcon);
+  // Clear timer, dead sharks don't move
+  window.clearInterval(popTimer);
+  // Change state
+  submitSharkStatus('dead');
+}
+
+function submitSharkStatus(deadOrAlive) {
+  var delta = {
+    'shark-status': deadOrAlive,
+    'shark-latlng': JSON.stringify([shark.getPosition().lat(), shark.getPosition().lng()])
+  }
+  wave.getState().submitDelta(delta);
+}
+
+function getRandomLatLng() {
+  var bounds = map.getBounds();
+  var southWest = bounds.getSouthWest();
+  var northEast = bounds.getNorthEast();
+  var lngSpan = northEast.lng() - southWest.lng();
+  var latSpan = northEast.lat() - southWest.lat();
+  var latlng = new google.maps.LatLng(southWest.lat() + latSpan * Math.random(),
+     southWest.lng() + lngSpan * Math.random());
+  return latlng;
+}
+gadgets.util.registerOnLoadHandler(initialize);
+</script>
+</head> 
+<body style="margin:0px; padding:0px;"> 
+  <div id="map_canvas" style="width:90%; height:90%"></div> 
+</body> 
+</html> 
+]]></Content>
+</Module>
