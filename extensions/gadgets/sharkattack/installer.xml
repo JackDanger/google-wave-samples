@@ -1,0 +1,11 @@
+<extension 
+    name="Shark Attack"
+    thumbnailUrl="http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/gadgets/sharkattack/shark_alive.png"
+    description="Kill a shark!"> 
+  <author name="Google"/> 
+  <menuHook location="TOOLBAR" text="Shark Attack!"
+    iconUrl="http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/gadgets/sharkattack/shark_alive.png"> 
+    <insertGadget
+      url="http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/gadgets/sharkattack/sharkattack.xml"/> 
+  </menuHook> 
+</extension> 
