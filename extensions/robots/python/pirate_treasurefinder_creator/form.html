@@ -1,0 +1,45 @@
+<html>
+<head>
+</head>
+<body>
+<div id="main"></div>
+<div id="result"></div>
+<script>
+function addForm() {
+  var content = document.createElement('div');
+  var title = document.createElement('div');
+  title.innerHTML = '<b>Ahoy, Matey! You want to hunt for treasure here?</b>';
+  var input = document.createElement('input');
+  input.type = 'text';
+  var button = document.createElement('input');
+  button.type = 'button';
+  button.value = 'Yarrrr!';
+  button.onclick = function() {
+     var address = input.value;
+     var url = 'http://pirate-treasure-hunt-bot.appspot.com/web/create';
+     url += '?address=' + address;
+     url += '&callback=onWaveCreate';
+     var script = document.createElement('script');
+     script.src = url;
+     document.body.appendChild(script);
+  };
+  content.appendChild(title);
+  content.appendChild(input);
+  content.appendChild(button);
+  document.getElementById('main').appendChild(content);
+}
+
+function onWaveCreate(json) {
+  var result = document.getElementById('result');
+  if (json.status == 'success') {
+    url = 'https://wave.google.com/a/wavesandbox.com/#restored:wave:' + json.wave_id.replace('+', '%252B');
+    result.innerHTML = '<a href="' + url + '">Go Hunting!</a>';
+  } else {
+    result.innerHTML += 'Oh noes!';
+  }
+}
+
+addForm();
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+<extension
+    name="Pirate Speaky"
+    thumbnailUrl="http://www.tauntonflowershow.co.uk/images/pirate.gif"
+    description="Translate your wave to pirate speak.">
+  <author name="Google"/>
+  <menuHook location="toolbar" text="Translate 2 Pirate Speak"
+      iconUrl="http://www.yohoyoho.com/images/jolly_roger.gif">
+    <annotateSelection key="text-to-translate" value=""/>
+    <addParticipants>
+      <participant id="pirate-select-translator-bot@appspot.com"/>
+    </addParticipants>
+  </menuHook>
+</extension>

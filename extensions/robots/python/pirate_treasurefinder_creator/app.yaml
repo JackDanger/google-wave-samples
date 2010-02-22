@@ -1,0 +1,19 @@
+application:  pirate-treasure-hunt-bot 
+version:      1
+runtime:      python
+api_version:  1
+
+handlers:
+- url: /
+  script: handler.py
+
+- url: /form.html
+  static_files: form.html
+  upload: form.html
+  mime_type: text/html
+
+- url: /web/.*
+  script: handler.py
+
+- url: /_wave/.*
+  script: handler.py

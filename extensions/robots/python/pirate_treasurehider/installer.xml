@@ -1,0 +1,10 @@
+<extension name="Treasure Hunt" description="Hides treasure inside a wave."
+  thumbnailUrl="http://www.iconeasy.com/icon/thumbnails/Movie%20&amp;%20TV/Jolly%20Roger/Pirate%20Treasure%20Icon.jpg">
+  <version>2</version>
+  <author name="Pamela Fox" email="google-wave-api@googlegroups.com"/>
+  <menuHook location="NEW_WAVE_MENU" text="New Treasure Hunt">
+    <createNewWave>
+      <participant id="pirate-treasure-hider-bot@appspot.com"/>
+    </createNewWave>
+  </menuHook>
+</extension>
