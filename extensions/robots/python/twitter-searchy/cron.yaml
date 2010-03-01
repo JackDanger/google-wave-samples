@@ -1,0 +1,4 @@
+cron:
+- description: tweet update
+  url: /web/cron
+  schedule: every 1 minutes
