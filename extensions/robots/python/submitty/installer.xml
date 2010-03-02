@@ -1,0 +1,9 @@
+<extension name="Submitty" description="Submit extensions to gallery."
+  thumbnailUrl="http://submitty-bot.appspot.com/img/submitty_thumbnail.png">
+  <author name="Pamela Fox" email="google-wave-api@googlegroups.com"/>
+  <menuHook location="NEW_WAVE_MENU" text="New Extension Submission">
+    <createNewWave>
+      <participant id="submitty-bot@appspot.com" />
+    </createNewWave>
+  </menuHook>
+</extension>

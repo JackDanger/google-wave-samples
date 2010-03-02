@@ -1,31 +1,52 @@
-questions = """
-<b>For any robot in the extension:</b>
-- What events does the robot react to? How does it react?
+prelim = """
+Congratulations on completing your extension!
+
+Welcome to the extension review process. We have put together a series of questions that will help us learn more about your extension and how users will use it inside Wave. When you are done responding, you can let us know by clicking the "Share with Reviewers" button above. If you haven't yet, we suggest reading through the <a href="http://code.google.com/apis/wave/extensions/designprinciples.html">design principles</a> and <a href="http://code.google.com/apis/gadgets/docs/publish.html#Hi_Volume">gadgets performance</a> docs.
+
+<b>First, some basic info about you:</b>
+
+<b>Name</b>:
+<b>Location</b>:
+
+<b>Now, some info about your extension:</b>
+
+<b>Name</b>:
+<b>Sample Wave</b>:
+<i>Please host on Google Wave Preview. If it is not a public wave, please add google-wave-extensions-review@googlegroups.com to the wave so that we can access it.</i>
+<b>Installer</b>:
+
+
+"""
+
+prelim_robotq = "Does your extension include a robot?"
+
+prelim_gadgetq = "Does your extension include a gadget?"
+
+robot = """
+Great! Please answer the following questions about the robot:
+
+- For each event that the robot reacts to, how does it respond?
 - What does the robot do when first added to a Wave (if anything)?
-- Have you tested your robot in conjunction with other robots?
+- Can/does this bot work in conjunction with any other robots?
+- Does the user have to know some special syntax for using your robot? (We recommend avoiding this when possible)
+"""
 
-<b>For any gadget in the extension:</b>
-- What data is shared in the state object? Describe the key/value mapping.
-- At what points are state deltas submitted? How fine-grained are the deltas?
-- When a new state is received, how does the gadget process it to produce the new view?
-- In edit mode, what can the user do? Is there an indication that it is in edit mode?
-- In view mode, what can the user do? Is there an indication that it is in view mode?
-- When the gadget goes from view mode to edit mode, what is the transition like? What about when it goes from edit to view?
+gadget = """
+Great! Please answer the following questions about the gadget:
+
+- What data is shared in the state object? Please describe the key/value mapping.
+- How frequenty is the state updated?
+- Does the gadget use setModeCallback to provide different behavior in edit
+  versus view mode? If so, please describe.
 - What does the user see in playback mode?
-- What do users see when they first add the gadget? (Are there any special instructions?)
-- How does one user know what another user is editing? (What indicators are used?)
+- How does one user know what/where another user is editing?
+- Is the gadget constant sized? If not, please describe the gadget resizing.
+- Does the gadget provide instructions to users?
+- Does the gadget provide a way for users to give feedback?
+"""
 
-<b>Ease of Use:</b>
-- For robots: Does the user have to know some special syntax for using your robot? (We recommend avoiding this when possible).
-- For gadgets: Does the gadget provide some instructions to users? When are these instructions displayed to users, and do they describe what other users will see?
 
-<b>Looking Good:</b>
-- Describe how you have designed your toolbar icon to be recognizable to users.
-- If robot involved, does your robot avatar somehow relate to the toolbar icon?
-- If gadget involved:
-- Describe the gadget sizing. Is it constant sized? If not, when does it resize?
-- Does the gadget have a clear border around it?
-
+questions = """
 <b>Performance/Stability:</b>
 - If it is a gadget:
 What other resources does your gadget bring in? For each resource, please note the server that the resource is on, and if you are using gadget caching or some other caching technique.

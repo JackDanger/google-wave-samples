@@ -21,6 +21,13 @@ def check(installer_url):
           required_tagerrors.append(required_tagname)
         if len(required_tagerrors) > 0:
           errors.append('Installer XML is missing required tag(s): ' + ', '.join(required_tagerrors)) 
-    if len(errors) == 0:
-      errors.append('No errors found. Installer looks good.')
   return errors
+
+def get_name(installer_url):
+  response = urlfetch.fetch(installer_url)
+  if response.status_code == 200:
+    dom = minidom.parseString(response.content)
+    extension_tag = dom.getElementsByTagName('extension')
+    if extension_tag:
+      name = extension_tag[0].getAttribute('name')
+      return name

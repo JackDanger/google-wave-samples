@@ -1,14 +1,85 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Module>
-  <ModulePrefs title="Submitty" height="257">
+  <ModulePrefs title="Submitty" height="45">
     <Require feature="dynamic-height" />
     <Require feature="wave" />
   </ModulePrefs>
   <Content type="html">
   <![CDATA[
-   <label>Does your extension include a robot?</label> <input type="checkbox" id="includeRobot"/>
-   <br>
-   <label>Does your extension include a gadget?</label> <input type="checkbox" id="includeGadget"/>
+  <script src="http://submitty-bot.appspot.com/js/util.js"></script>
+  <script>
+function getEl(id) {
+  return document.getElementById(id);
+}
+
+function hide(el) {
+  el.style.display = 'none';
+}
+
+function show(el) {
+  el.style.display = 'block';
+}
+
+function renderState() {
+  var status = wave.getState().get('status');
+  hide(getEl('status_new'));
+  hide(getEl('status_review'));
+  hide(getEl('status_review_admin'));
+  hide(getEl('status_approved'));
+
+  if (status == 'review') {
+  if (isViewerApprover()) {
+      show(getEl('status_review_admin'));
+      } else {
+      show(getEl('status_review'));
+    }
+  } else if (status == 'approved') {
+      show(getEl('status_approved'));
+  } else if (!status) {
+      show(getEl('status_new'));
+  }
+}
+
+function isViewerApprover() {
+  var viewerId = wave.getViewer().getId();
+  if (viewerId == 'pamela.fox@wavesandbox.com' ||
+    viewerId == 'pamela.fox@googlewave.com') {
+    return true;
+  }
+  return false;
+}
+
+function reviewClicked() {
+  wave.getState().submitDelta({'status': 'review', 'review_clicked': wave.getViewer().getId()});
+}
+
+function approveClicked() {
+  wave.getState().submitDelta({'status': 'approved', 'approve_clicked': wave.getViewer().getId()});
+}
+
+function init() {
+  wrappy.ui.convertButtons();
+  wave.setStateCallback(renderState);
+}
+
+wrappy.util.registerOnLoad(init);
+</script>
+
+<div style="padding:3px; margin:auto; text-align: center; border: 1px solid #5590D2;
+  background-color:#C9E2FC; width:95%; height:30px;">
+  <center>
+    <input id="status_new" type="button" onclick="reviewClicked()" value="Share with Reviewers"
+      style="display:none"/>
+    <input id="status_review_admin" type="button" onclick="approveClicked()" value="Approve for Gallery"
+      style="display:none"/>
+    <span id="status_review" style="display:none">This wave is now shared with the review team. We
+      will respond within a week.</span>
+    <span id="status_approved" style="display:none">This extension is now in the gallery. We will
+      continue to use this wave to give you feedback that we hear from
+      users.</span>
+  </center>
+</div>
+
   ]]>
   </Content>
 </Module>
