@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Module>
+  <ModulePrefs title="test" height="500">
+    <Require feature="rpc" />
+  </ModulePrefs>
+
+  <Content type="html">
+  <![CDATA[   
+  
+<style>
+body {
+  font-size: 12px;
+  color: gray;
+  font-family: georgia, arial;
+}
+#debug {
+  font-size: 10px;
+  color: red;
+  text-align: left;
+  overflow: auto;
+  height: 100px;
+  border: 1px solid red;
+  padding: 3px;
+}
+#main {
+  padding: 5px;
+  border: 0px solid gray;
+  height: 400px;
+  width: 100%;
+}
+
+#calContainer {
+  height: 100%;
+  width: 100%;
+}
+</style>
+
+<script type="text/javascript" src="http://wave-api.appspot.com/public/wave.js"></script>
+<script type="text/javascript" src="http://trixy-wave.appspot.com/js/jquery.js"></script>
+<script type="text/javascript" src="http://trixy-wave.appspot.com/js/json2.js"></script>          
+
+<script type="text/javascript">
+  window.authSubCompleted = false;
+  gadgets.util.registerOnLoadHandler(init);
+  
+  function init() {
+    initDebugConsole();     
+           
+    if (wave && wave.isInWaveContainer()) {
+        wave.setParticipantCallback(function() {
+          if (wave.getViewer() != null) {
+            var viewer = wave.getViewer();
+            debug('viewer id = ' + viewer.getId());
+            debug('host id = ' + wave.getHost().getId());                     
+          }
+          wave.setStateCallback(waveStateChanged);          
+        });                   
+    }     
+  }
+
+  function waveStateChanged() {
+    if (window.authSubCompleted) {
+      return;
+    }
+    var keys = wave.getState().getKeys();
+    for (var i = 0; i < keys.length; i++) {
+      var key = keys[i];
+    }
+  }
+  function initDebugConsole() {
+    if (/.+__debugconsole__/.test(document.location.href)) {
+      initConsoleEventHandlers();
+      jQuery('#debugConsole').css({display: 'block'});
+    } else {
+      jQuery('#debugConsole').css({display: 'none'});
+    }               
+  }
+  
+  function initConsoleEventHandlers() {     
+      jQuery('#clear').click( function() {
+        jQuery('#debug').empty();
+      });
+    
+      jQuery('#reset').click( function() {
+        resetAllStates();
+      });
+    
+      jQuery('#print').click( function() {
+        printAllStates();
+      });      
+    jQuery('#test').click( function() {
+      test();
+    });
+  }
+  
+  function test() {
+    window.top.location = 'http://www.ebay.com';  
+  }
+  
+  function get(key) {
+    var ret = null;
+    if (window.wave) {
+      ret = wave.getState().get(key);
+    }
+    return ret;
+  }
+  
+  function set(key, value) {
+    var obj = {};
+    obj[key] = value;
+    if (window.wave) {
+      wave.getState().submitDelta(obj);
+    }
+  }
+  
+  function rm(key) {
+    var obj = {};
+    obj[key] = null;
+    if (window.wave) {
+      wave.getState().submitDelta(obj);
+    }
+  }
+
+  function printAllStates() {
+  
+    if (!window.wave) {
+      return;
+    }
+  
+    var html = [];
+  
+    var keys = wave.getState().getKeys();
+  
+    for ( var i = 0; i < keys.length; ++i) {
+      var key = keys[i];
+      var value = wave.getState().get(key);
+  
+      html.push(key + ' = ' + value);
+      html.push('<br>');
+    }
+  
+    debug(html.join(''));
+  }
+  
+  function resetAllStates() {
+  
+    if (window.wave) {
+      
+      var obj = {};
+      
+      var keys = wave.getState().getKeys();
+  
+      for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        obj[key] = null;
+      }
+     
+      debug(JSON.stringify(obj));
+  
+      wave.getState().submitDelta(obj);
+    }    
+  
+  }
+  
+  function debug(msg) {
+    jQuery('#debug').prepend(msg + '<br/>');
+  }
+
+  function getSelfUrl() {
+    var protocol = document.location.protocol;
+    var host = document.location.host;
+    return protocol + '//' + host;
+  }
+
+</script>
+
+<div id="debugConsole" style="text-align: left;">
+    <input type="button" id="clear" value="Clear Debug"/>
+    <input type="button" id="reset" value="Reset All States"/>        
+    <input type="button" id="print" value="Print All States"/> 
+    <input type="button" id="test" value="Test"/>
+    <br>
+    <div id='debug'></div>
+</div>
+<div align="center">
+  <div id="main"> 
+  </div>
+</div>
+
+
+  ]]>
+  </Content>
+</Module>

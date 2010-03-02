@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Module>
+	<ModulePrefs title="buggy" height="100">
+		<Require feature="rpc" />
+	</ModulePrefs>
+
+	<Content type="html">
+  <![CDATA[   
+  
+<style>
+body {
+  font-size: 12px;
+  color: gray;
+  font-family: georgia, arial;
+}
+#debug {
+  font-size: 10px;
+  color: red;
+  text-align: left;
+  overflow: auto;
+  height: 100px;
+  border: 1px solid red;
+  padding: 3px;
+}
+#main {
+	padding: 5px;
+	border: 0px solid gray;
+	height: 400px;
+	width: 100%;
+}
+
+#calContainer {
+	height: 100%;
+  width: 100%;
+}
+</style>
+
+<script type="text/javascript" src="http://wave-api.appspot.com/public/wave.js"></script>
+<script type="text/javascript" src="http://trixy-wave.appspot.com/js/jquery.js"></script>
+<script type="text/javascript" src="http://trixy-wave.appspot.com/js/json2.js"></script>					
+
+<script type="text/javascript">
+	window.authSubCompleted = false;
+	gadgets.util.registerOnLoadHandler(init);
+	
+	function init() {
+		initDebugConsole();						
+		initEventHandlers();						
+		if (wave && wave.isInWaveContainer()) {
+		    wave.setParticipantCallback(function() {
+		    	if (wave.getViewer() != null) {
+						var viewer = wave.getViewer();
+						debug('viewer id = ' + viewer.getId());
+						debug('host id = ' + wave.getHost().getId());		      			      
+		      }
+		      wave.setStateCallback(waveStateChanged);
+		      
+		    });				    		    
+		}			
+	}
+
+	function waveStateChanged() {
+		if (window.authSubCompleted) {
+			return;
+		}
+		var keys = wave.getState().getKeys();
+		for (var i = 0; i < keys.length; i++) {
+			var key = keys[i];
+			if (key == 'user' && wave.getViewer().getId() == get(key)) {
+			  window.user = get('user');
+			  window.authSubUrl = get('authSubUrl');
+			  window.getUserInfoUrl = get('getUserInfoUrl') + 
+	  				'?callback=setAuthSubStatus&user=' + window.user;
+			  var msg = [];
+			  msg.push('<h2>' + user + '</h2>');
+			  msg.push('<b>You need to authorize access to your google account via the AuthSub popup.');
+			  msg.push('Please make sure browser popup is enabled.</b><br>');
+			  msg.push(' [ <a href="javascript:showPopup();void(0);">show popup</a> ]');			  			  			 
+			  jQuery('#main').html(msg.join(''));
+				showPopup();
+				break;				
+			}
+		}
+		if (!window.user) {
+		  var msg = [];
+		  msg.push('Please ignore this. We are waiting for AuthSub authentication from another user.');			  			 
+		  jQuery('#main').html(msg.join(''));			
+		}
+	}
+	
+	function showPopup() {	
+		var authSubWindow = window.open(window.authSubUrl, 'authSubWindow',
+				'resizable=1,width=700,height=500');
+		window.timer = setInterval(checkAuthSub, 2000);
+	}
+	
+	function checkAuthSub() {			
+		debug(window.getUserInfoUrl);
+		jQuery.getScript(
+				window.getUserInfoUrl, 
+				function() {
+					if (window.authSubCompleted) {
+						clearInterval(window.timer);
+						set('authSubCompleted', window.user);
+					}
+				}
+	  );		
+	}
+	
+	function setAuthSubStatus(status) {
+		debug('status = ' + status);
+		window.authSubCompleted = status;
+	}
+	
+	function initDebugConsole() {
+		if (/.+__debugconsole__/.test(document.location.href)) {
+			jQuery('#debugConsole').css({display: 'block'});
+		} else {
+			jQuery('#debugConsole').css({display: 'none'});
+		}								
+	}
+	
+	function initEventHandlers() {
+			
+		jQuery('#clear').click( function() {
+			jQuery('#debug').empty();
+		});
+	
+		jQuery('#reset').click( function() {
+			resetAllStates2();
+		});
+	
+		jQuery('#print').click( function() {
+			printAllStates();
+		});
+	
+		jQuery('#test').click( function() {
+			test();
+		});
+	}
+
+	function test() {
+			var jsonArray = [];
+			var participants = wave.getParticipants();
+			
+			for (var i=0; i<participants.length; i++) {
+				var json = {};				
+				var person = participants[i];
+				var id = person.getId();
+				var name = person.getDisplayName();
+				var image = person.getThumbnailUrl();
+				json.id = id;
+				json.name = name;
+				json.image = image;
+				jsonArray.push(json);				
+			}
+			debug(JSON.stringify(jsonArray));	
+	  	set('gadgetProfileData', escape(JSON.stringify(jsonArray)));		
+	}
+	
+	function get(key) {
+		var ret = null;
+		if (window.wave) {
+			ret = wave.getState().get(key);
+		}
+		return ret;
+	}
+	
+	function set(key, value) {
+		var obj = {};
+		obj[key] = value;
+		if (window.wave) {
+			wave.getState().submitDelta(obj);
+		}
+	}
+	
+	function rm(key) {
+		var obj = {};
+		obj[key] = null;
+		if (window.wave) {
+			wave.getState().submitDelta(obj);
+		}
+	}
+
+	function printAllStates() {
+	
+		if (!window.wave) {
+			return;
+		}
+	
+		var html = [];
+	
+		var keys = wave.getState().getKeys();
+	
+		for ( var i = 0; i < keys.length; ++i) {
+			var key = keys[i];
+			var value = wave.getState().get(key);
+	
+			html.push(key + ' = ' + value);
+			html.push('<br>');
+		}
+	
+		debug(html.join(''));
+	}
+	
+	function resetAllStates() {
+	
+	  if (window.wave) {
+	  	
+	  	var obj = {};
+	    
+	    var keys = wave.getState().getKeys();
+	
+	    for (var i = 0; i < keys.length; i++) {
+	    	var key = keys[i];
+	    	obj[key] = null;
+	    }
+	   
+	    debug(JSON.stringify(obj));
+	
+	    wave.getState().submitDelta(obj);
+	  }    
+	
+	}
+	
+	function debug(msg) {
+		jQuery('#debug').prepend(msg + '<br/>');
+	}
+
+	function getSelfUrl() {
+	  var protocol = document.location.protocol;
+	  var host = document.location.host;
+	  return protocol + '//' + host;
+	}
+
+</script>
+
+<div id="debugConsole" style="text-align: left;">
+    <input type=button id=clear value='Clear Debug'/>
+    <input type=button id=reset value='Reset All States'/>
+    <input type=button id=print value='Print All States'/> 
+    <input type=button id=test value='Test'/>
+    <br>
+    <div id='debug'></div>
+</div>
+<div align="center">
+	<div id="main">	
+	</div>
+</div>
+
+
+  ]]>
+	</Content>
+</Module>

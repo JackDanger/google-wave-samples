@@ -1,0 +1,1 @@
+- you must download all the dependent jars here including, java GData client library, java wave client library, guice
