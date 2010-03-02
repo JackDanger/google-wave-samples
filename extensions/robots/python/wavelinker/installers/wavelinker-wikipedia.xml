@@ -1,0 +1,13 @@
+<extension 
+    name="WaveLinker"
+    description="Adds buttons that links the selected text to a matching Wikipedia page, definition, or Google result."
+    thumbnailUrl="http://wavelinker.appspot.com/preview.png"> 
+  <author name="Google Wave Team"/> 
+  <menuHook location="TOOLBAR" text="Link to matching Wikipedia entry"
+      iconUrl="http://wavelinker.appspot.com/images/icon_wikipedia.jpg"> 
+    <annotateSelection key="robot.wavelinker.request" value="search/wikipedia.org"/> 
+    <addParticipants> 
+      <participant id="wavelinker@appspot.com"/> 
+    </addParticipants> 
+  </menuHook> 
+</extension> 

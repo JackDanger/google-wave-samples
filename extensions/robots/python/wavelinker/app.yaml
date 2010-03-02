@@ -21,5 +21,8 @@ handlers:
   static_files: toolbaricon.png
   upload: toolbaricon.png
 
+- url: /images
+  static_dir: images
+
 - url: /_wave/.*
   script: wavelinker.py

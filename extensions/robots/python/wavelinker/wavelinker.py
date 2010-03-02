@@ -3,23 +3,24 @@
 """Robot that auto links to first google results
 """
 
-
 import logging
 import urllib
 
 from waveapi import events
-from waveapi import model
 from waveapi import robot
-from waveapi import robot_abstract
-from waveapi import document
+from waveapi import element
+from waveapi import ops
+from waveapi import element
+from waveapi import appengine_robot_runner
 
 from django.utils import simplejson
 from google.appengine.api import urlfetch
 
+ROBOT_KEY = 'robot.wavelinker.request'
 
-ROBOT_NAME = 'wavelinker'
-
-def GoogleSearch(q):
+def GoogleSearch(q, site=''):
+  q += ' site:%s' % site
+  logging.info('q' + q)
   url = ('http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=%s') % (urllib.quote(q))
   js = urlfetch.fetch(url=url).content
   results = simplejson.loads(js)['responseData']['results']
@@ -29,50 +30,55 @@ def GoogleSearch(q):
   return res['url']
 
 
-def Execute(properties, context):
+def Execute(event, wavelet):
   """Actual linking."""
-  blipId = properties['blipId']
-  blip = context.GetBlipById(blipId)
-  doc = blip.GetDocument()
-  text = doc.GetText()
+  blip = event.blip
+  text = blip.text
   # construct the todo outside of the loop to avoid
   # influencing what we're observing:
   todo = []
   for ann in blip.annotations:
-    if ann.name == 'robot.wavelinker.request':
-      todo.append((ann.range.start, ann.range.end, ann.value))
+    if ann.name == ROBOT_KEY:
+      todo.append((ann.start, ann.end, ann.value))
   # now call GoogleSearch for all values and insert a link if we get a matching
   # url:
   for start, end, value in todo:
     payload = text[start:end]
-    if value == 'google':
-      url = GoogleSearch(payload)
+    value_split = value.split('/', 1)
+    if value.startswith('search/'):
+      if len(value_split) > 1:
+        url = GoogleSearch(payload, value_split[1])
+      else:
+        url = GoogleSearch(payload)
+    elif value.startswith('prefix/'):
+      if len(value_split) > 1:
+        url = 'http://%s%s' % (value_split[1], payload)
     else:
       continue
-    range = document.Range(start, end)
-    doc.DeleteAnnotationsInRange(range, 'robot.wavelinker.request')
+    blip.range(start, end).clear_annotation(ROBOT_KEY)
     if url:
-      doc.SetAnnotation(range, 'link/manual', url)
+      blip.range(start, end).annotate('link/manual', url)
 
 
-def OnSelfAdded(properties, context):
+def OnSelfAdded(event, wavelet):
   """Invoked when any participants have been added/removed from the wavelet."""
-  logging.info('OnSelfAdded')
-  Execute(properties, context)
+  Execute(event, wavelet)
 
 
-def OnDocumentChanged(properties, context):
+def OnDocumentChanged(event, wavelet):
+  """Invoked when any participants have been added/removed from the wavelet."""
+  Execute(event, wavelet)
+
+def OnAnnotationChanged(event, wavelet):
   """Called when the document changes."""
   # We only care about new docs which are indicated by datadocs:
-  logging.info('OnDocumentChanged')
-  Execute(properties, context)
-
+  Execute(event, wavelet)
 
 if __name__ == '__main__':
-  linker = robot.Robot(ROBOT_NAME.capitalize(),
-      image_url='http://wavelinker.appspot.com/avatar.png',
-      profile_url='http://wavelinker.appspot.com/')
-  linker.RegisterHandler(events.WAVELET_SELF_ADDED,
-                        OnSelfAdded)
-  linker.RegisterHandler(events.DOCUMENT_CHANGED, OnDocumentChanged)
-  linker.Run(debug=True)
+  linker = robot.Robot('Wave Linker',
+      image_url='http://www.seoish.com/wp-content/uploads/2009/04/wrench.png',
+      profile_url='')
+  linker.register_handler(events.WaveletSelfAdded, OnSelfAdded)
+  linker.register_handler(events.DocumentChanged, OnDocumentChanged)
+  linker.register_handler(events.AnnotatedTextChanged, OnAnnotationChanged, filter=ROBOT_KEY)
+  appengine_robot_runner.run(linker, debug=True)

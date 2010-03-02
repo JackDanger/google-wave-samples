@@ -7,7 +7,7 @@
       iconUrl="http://wavelinker.appspot.com/toolbaricon.png">
     <annotateSelection key="robot.wavelinker.request" value="google"/>
     <addParticipants>
-      <participant id="wavelinker@appspot.com"/>
+      <participant id="wavelinker+wikipedia.org@appspot.com"/>
     </addParticipants>
   </menuHook> 
 </extension> 
