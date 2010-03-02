@@ -1,0 +1,50 @@
+<script>
+function addSource() {
+  var sourcesDiv = document.getElementById("sources");
+  var numSources = parseInt(document.getElementById("numSources").value, 10);
+
+  var sourcesTmpl = '<input type="hidden" name="sourceNUM" value="exists">' +
+    'Project: <input type="text" name="source_projectNUM">' +
+    'Label: <input type="text" name="source_labelNUM"><br/>';
+  var sourcesHtml = sourcesTmpl.replace(/NUM/g, numSources+'');
+  document.getElementById('numSources').value = numSources + 1;
+  sourcesDiv.innerHTML += sourcesHtml;
+}
+</script>
+<form method="post" action="/web/save">
+<table>
+ <tr>
+  <td>Name:</td><td><input type="text" value="{{preset.name}}" name="name"></td>
+  <input type="hidden" name="key" value="{{preset.key}}">
+  <input type="hidden" name="url" value="{{url}}">
+ </tr>
+ <tr>
+  <td>Source(s):</td>
+  <td>
+  <div id="sources">
+   {% if sources %}
+    <input type="hidden" name="num_sources" id="numSources" value="{{sources|length}}">
+     {% for source in sources %}
+     <input type="hidden" name="source{{forloop.counter0}}" value="exists">
+    Project: <input type="text" name="source_project{{forloop.counter0}}" value="{{source.project}}">
+    Label: <input type="text" name="source_label{{forloop.counter0}}" value="{{source.label}}">
+    <br/>
+     {% endfor %}
+   {% else %}
+    <input type="hidden" name="num_sources" id="numSources" value="1">
+     <input type="hidden" name="source0" value="exists">
+    Project: <input type="text" name="source_project0">
+    Label: <input type="text" name="source_label0">
+    <br/>
+   {% endif %}
+  </div>
+  </td>
+ </tr>
+ <tr>
+  <td colspan="2"><a onclick="addSource()" href="#">Add another source</a></td>
+ </tr>
+ <tr>
+  <td colspan="2"><input type="submit" value="Save"></td>
+ </tr>
+</table>
+</form>

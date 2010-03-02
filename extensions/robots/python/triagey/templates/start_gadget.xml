@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<Module>
+<ModulePrefs title="State Example" height="60">
+  <Require feature="wave" /> 
+  <Require feature="dynamic-height" /> 
+</ModulePrefs>
+<Content type="html">
+<![CDATA[ 
+    <script src="{{server}}/js/util.js"></script>
+    <script type="text/javascript">
+
+    function onLoadClicked() {
+      var preset_key = document.getElementById('presetKey').value;
+      wave.getState().submitDelta({'preset_key': preset_key});
+    }
+
+    function init() {
+      if (wave && wave.isInWaveContainer()) {
+        document.getElementById('loadButton').onclick = onLoadClicked;
+        document.getElementById('loadButton').style.opacity = '1.0';
+        document.getElementById('loadButton').disabled = false;
+      }
+    }
+    gadgets.util.registerOnLoadHandler(init);
+    </script>
+    {% include "start.html" %}
+  ]]> 
+  </Content>
+</Module>

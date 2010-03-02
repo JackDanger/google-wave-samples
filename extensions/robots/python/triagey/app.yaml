@@ -1,0 +1,17 @@
+application: bug-triagey 
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /static
+  static_dir: static
+
+- url: /js
+  static_dir: js
+
+- url: /_wave/.*
+  script: robot.py
+
+- url: /web/.*
+  script: web.py

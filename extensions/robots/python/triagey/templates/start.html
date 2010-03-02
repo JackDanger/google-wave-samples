@@ -1,0 +1,142 @@
+<style>
+  td {
+    font-size: small;
+  }
+  input {
+    font-size: small;
+  }
+</style>
+<script>
+function hide(id) {
+  document.getElementById(id).style.display = 'none';
+}
+
+function show(id) {
+  elem = document.getElementById(id);
+  elem.style.display = 'block';
+}
+
+
+function onPresetsLoad(response) {
+  document.getElementById('presetKey').innerHTML = '';
+  for (var i = 0; i < response.data.length; i++) {
+    var preset = response.data[i];
+    var option = document.createElement('option');
+    option.value = preset.key;
+    option.innerHTML = preset.name;
+    document.getElementById('presetKey').appendChild(option);
+  }
+}
+
+function getPresets() {
+  var params = {}
+  params[wrappy.io.RequestParameters.CONTENT_TYPE] = wrappy.io.ContentType.JSON;
+  params[wrappy.io.RequestParameters.REFRESH_INTERVAL] = 10;
+  wrappy.io.makeRequest('{{server}}/web/presets', onPresetsLoad, params);
+}
+
+function getPreset() {
+  var params = {}
+  params[wrappy.io.RequestParameters.CONTENT_TYPE] = wrappy.io.ContentType.JSON;
+  params[wrappy.io.RequestParameters.REFRESH_INTERVAL] = 10;
+  params[wrappy.io.RequestParameters.METHOD] = wrappy.io.MethodType.POST;
+  params[wrappy.io.RequestParameters.POST_DATA] = getFormData(document.getElementById('startForm'));
+  wrappy.io.makeRequest('{{server}}/web/preset', onPresetLoad, params);
+}
+
+function savePreset() {
+  var params = {}
+  params[wrappy.io.RequestParameters.CONTENT_TYPE] = wrappy.io.ContentType.JSON;
+  params[wrappy.io.RequestParameters.METHOD] = wrappy.io.MethodType.POST;
+  params[wrappy.io.RequestParameters.POST_DATA] = getFormData(document.getElementById('editForm'));
+  wrappy.io.makeRequest('{{server}}/web/save', function(){}, params);
+}
+
+function getEl(id) {
+  return document.getElementById(id);
+}
+
+var numSources = 0;
+
+function onPresetLoad(response) {
+  getEl('edit_name').value = response.data.name;
+  getEl('edit_key').value = response.data.key;
+  for (var i = 0; i < response.data.sources.length; i++) {
+    addSource(i, response.data.sources[i]);
+ }
+}
+
+function addSource(i, source) {
+  if (i == 0) {
+    getEl('sources').innerHTML = '';
+  }
+  if (!source) source = {'project': '', 'label': ''}
+  getEl('sources').innerHTML += '<input type="hidden" name="source' + i + '" value="exists">' +
+      'Project: <input type="text" name="source_project' + i + '" value="' + source.project + '">' +
+      'Label: <input type="text" name="source_label' + i + '" value="' + source.label + '">' +
+      '<br/>';
+  numSources++;
+  wrappy.window.adjustHeight();
+}
+
+function goToStart() {
+  wrappy.ui.convertButtons();
+  getPresets();
+  hide('form');
+  show('start');
+  wrappy.window.adjustHeight();
+}
+
+function goToEdit() {
+  getPreset();
+  hide('start');
+  show('form');
+  wrappy.window.adjustHeight();
+}
+
+function goToNew() {
+  getEl('edit_name').value = '';
+  getEl('edit_key').value = '';
+  addSource(0);
+  hide('start');
+  show('form');
+  wrappy.window.adjustHeight();
+}
+
+wrappy.util.registerOnLoad(goToStart);
+</script>
+<div style="padding:5px; border: 1px solid #5590D2; background-color:#C9E2FC;">
+<div id="start">
+  <form method="get" name="start" id="startForm">
+  <select name="preset_key" id="presetKey">
+  </select>
+  <input type="button" value="Edit" id="editButton" onclick="goToEdit();"/>
+  <input type="button" value="Load in Wave" id="loadButton" disabled >
+  </form>
+  <input type="button" value="Create New" onclick="goToNew();">
+</div>
+<div id="form" style='display:none'>
+  <form method="get" name="edit" id="editForm">
+  <table>
+   <tr>
+    <td>Name:</td><td><input type="text" value="" name="name" id='edit_name'></td>
+    <input type="hidden" name="key" value="" id='edit_key'>
+   </tr>
+   <tr>
+    <td>Source(s):</td>
+    <td>
+    <div id="sources">
+    </div>
+    </td>
+   </tr>
+   <tr>
+    <td>
+    <td><a onclick="addSource(numSources)" href="#">Add another source</a></td>
+   </tr>
+   <tr>
+    <td colspan="2"><input type="button" value="Save" onclick="savePreset();goToStart();"></td>
+   </tr>
+  </table>
+  </form>
+</div>
+</div>
