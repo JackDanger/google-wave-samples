@@ -1,0 +1,24 @@
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
+	<filter>
+    <filter-name>guiceFilter</filter-name>
+    <filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>guiceFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <listener>
+    <listener-class>robot.GuiceServletConfig</listener-class>
+  </listener>
+  
+  <servlet>
+    <servlet-name>install</servlet-name>
+    <jsp-file>/install.jsp</jsp-file>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>install</servlet-name>
+    <url-pattern>/install</url-pattern>
+  </servlet-mapping>    
+</web-app>
