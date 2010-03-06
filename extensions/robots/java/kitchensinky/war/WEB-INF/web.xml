@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://java.sun.com/xml/ns/javaee"
+xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+  <listener>
+    <listener-class>com.google.wave.extensions.jkitchensinky.ServletContextLogger</listener-class>
+  </listener>
+  <servlet>
+    <servlet-name>JKitchensinky</servlet-name>
+    <servlet-class>com.google.wave.extensions.jkitchensinky.JKitchensinky</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>JKitchensinky</servlet-name>
+    <url-pattern>/_wave/*</url-pattern>
+  </servlet-mapping>
+</web-app>

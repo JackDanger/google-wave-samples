@@ -1,0 +1,67 @@
+<Module>
+  <ModulePrefs title="embedwave" height="220">
+    <Require feature="wave"/>
+  </ModulePrefs>
+
+  <Content type="html">
+  <![CDATA[
+<script type='text/javascript' src='http://wave-api.appspot.com/public/embed.js'></script>
+<script type="text/javascript">
+  var first = true;
+
+  function waveLoaded() {
+    document.getElementById('status').innerHTML = "Loaded: Yes";
+    wave.getState().submitDelta({loaded: "yes"});
+  }
+
+  function renderState() {
+    var cururl = document.location.href;
+    var pos = cururl.indexOf('?');
+    var parent = 'http://wave.google.com';
+    // oh for standardized query parameter parsing
+    if (pos != -1) {
+      cururl = cururl.substring(pos + 1);
+      var parameters = cururl.split(/&|#/);
+      for (var i = 0; i < parameters.length; i++) {
+        if (parameters[i].substring(0, 7) == 'parent=') {
+          parent = parameters[i].substring(7);
+        }
+      }
+    }
+    var state = wave.getState();
+    var waveid = state.get("waveid", "wavesandbox.com!w+FtRUuErf%0");
+    var server = 'http://wave.google.com/a/wavesandbox.com/'
+    pos = waveid.indexOf('!')
+    if (pos != -1) {
+      var domain = waveid.substring(0, pos);
+      if (domain == 'googlewave.com' || (domain == 'google.com' &&
+                                         parent.indexOf('smoke') >= 0)) {
+        server = parent + '/wave/'
+      } else {
+        server = parent + '/a/' + domain + '/';
+      }
+    }
+    if (first) {
+      var wavePanel = new WavePanel(server);
+      wavePanel.loadWave(waveid);
+      var frame = document.getElementById('waveframe');
+      wavePanel.setUIConfig('#E0E0E0', '#C01010');
+      wavePanel.init(document.getElementById('waveframe'), waveLoaded);
+      first = false;
+    }
+  }
+
+  function main() {
+    if (wave && wave.isInWaveContainer()) {
+      wave.setStateCallback(renderState);
+    }
+  }
+  gadgets.util.registerOnLoadHandler(main);
+</script>
+
+<span id='status'>Loaded: No</span>
+<div id='waveframe' style='height:200px;width:100%'/>
+
+]]>
+</Content>
+</Module>
