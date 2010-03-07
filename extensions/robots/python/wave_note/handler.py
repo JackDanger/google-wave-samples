@@ -1,4 +1,4 @@
-# Apache licensed
+# Apache 2.0 licensed
 import logging
 import random
 
