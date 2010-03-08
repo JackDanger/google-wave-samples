@@ -1,5 +1,6 @@
 # Apache 2.0 licensed
 # Adding a comment
+# Adding another comment
 import logging
 import random
 
