@@ -3,6 +3,7 @@
   <ModulePrefs title="Mappy" height="410">
     <Require feature="setprefs" />
     <Require feature="locked-domain" />
+    <Require feature="dynamic-height" />
   </ModulePrefs>
   <UserPref name="selection" default_value="${selection}" datatype="string" />
   <Content type="html"><![CDATA[
@@ -52,6 +53,7 @@
   function initialize() {
     wave.setStateCallback(receiveState, this);
     wave.setModeCallback(receiveMode, this);
+	gadgets.window.adjustHeight(410);
   }
 
   function receiveState(state) {
