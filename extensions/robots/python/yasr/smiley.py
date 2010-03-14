@@ -1,7 +1,7 @@
 #!/usr/bin/python2.4
 #
 # Copyright 2009 Google Inc. All Rights Reserved.
-"""Implementation of the Everything and the Kitchen Sink bot
+"""Implementation of the Everything bot
 
 Yet another smiley robot
 """
