@@ -1,7 +1,7 @@
 #!/usr/bin/python2.4
 #  
-# Copyright 2009 Google Inc. All Rights Reserved.
-"""Implementation of the Smiley bot
+# Copyright 2009 Google Inc. 
+"""Implementation of the Smiley robot
 
 Yet another smiley robot
 """
