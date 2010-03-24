@@ -33,6 +33,7 @@ def AddItems(blip, source):
     blip.append('Responded? ')
     blip.append(element.Button(name=(item.id + '-responded'), caption='No'))
     blip.all(item.title).annotate('link/manual', item.link)
+    blip.append('\n')
   blip.append('\n')
 
 def GetItems(project, label):
@@ -48,13 +49,12 @@ def GetItems(project, label):
   return items
 
 def OnButtonClicked(event, wavelet):
-  clicker = event.modified_by
-  clicked = event.properties['button']
-  blip = event.blip
-  button = blip.first(element.Button, name=clicked)
+  clicker = event.modified_by.split('@')[0]
+  button_name = event.button_name
+  button = event.blip.first(element.Button, name=button_name)
   if button:
-    logging.info('Found button')
-    button.update_element({'value': 'Yes'})
+    value = 'Yes (%s)' % clicker
+    button.update_element({'value': value})
 
 def OnSelfAdded(event, wavelet):
   blip = event.blip
