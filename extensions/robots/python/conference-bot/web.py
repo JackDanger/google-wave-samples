@@ -11,6 +11,9 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 from django.utils import simplejson
 
 import util
+import model
+
+collection_type = 'Conference'
 
 class AdminHandler(webapp.RequestHandler):
   def get(self):
@@ -21,14 +24,25 @@ class AdminHandler(webapp.RequestHandler):
     else:
       filename = 'admin.html'
       content_type = 'text/html'
-    template_values = {'server': util.GetServer()}
+    template_values = {'server': util.GetServer(), 'type': collection_type}
     path = os.path.join(os.path.dirname(__file__), 'templates/' + filename)
     self.response.headers['Content-Type'] = content_type
     self.response.out.write(template.render(path, template_values))
 
+class InstallerHandler(webapp.RequestHandler):
+  def get(self):
+    id = self.request.get('id')
+    collection = model.ConferenceCollection.get_by_id(int(id))
+    template_values = {'name': collection.name, 'id': collection.key().id()}
+    path = os.path.join(os.path.dirname(__file__), 'templates/installer.xml')
+    self.response.headers['Content-Type'] = 'text/xml' 
+    self.response.out.write(template.render(path, template_values))
+
+
 application = webapp.WSGIApplication(
                                      [
                                      ('/web/admin', AdminHandler),
+                                     ('/web/installer', InstallerHandler),
                                      ],
                                      debug=True)
 

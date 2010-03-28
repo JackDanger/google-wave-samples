@@ -292,7 +292,12 @@ wadget.io.waveEnableForm = function(form) {
     input.onclick = function() {
       var key = input.name || input.id || 'button';
       var delta = {}
+      // Indicate its been clicked atleast once
       delta[key] = 'clicked';
+      // Track each time its clicked
+      var key2 = key + '-clicked';
+      var clickedBefore = wave.getState().get(key2);
+      delta[key2] = (clickedBefore) ? (clickedBefore+1) : 1;
       wave.getState().submitDelta(delta);
     }
   }

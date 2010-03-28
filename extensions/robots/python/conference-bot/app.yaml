@@ -1,4 +1,4 @@
-application: pamelafox-randomrobot
+application: confrenzy
 version: 1
 runtime: python
 api_version: 1
@@ -13,7 +13,14 @@ handlers:
 - url: /js
   static_dir: js
 
+- url: /img
+  static_dir: img
+
 - url: /installer.xml.*
   static_files: installer.xml
   upload: installer.xml
   mime_type: text/xml
+
+- url: /_ah/queue/deferred
+  script: deferred.py
+  login: admin

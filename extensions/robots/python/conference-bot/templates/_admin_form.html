@@ -1,18 +1,20 @@
 <script>
 function init() {
-  wrappy.ui.convertButtons();
-  wrappy.window.adjustHeight();
+  wadget.ui.convertButtons();
+  wadget.window.adjustHeight();
 }
-wrappy.util.registerOnLoad(init);
+wadget.util.registerOnLoadHandler(init);
 </script>
 <form id="admin_form">
 <table>
+  <tr><td colspan="2"><img
+      src="http://chart.apis.google.com/chart?cht=it&chs=32x32&chco=5590D2,000000ff,ffffff01&chl=1&chx=FFFFFF,14&chf=bg,s,00000000&ext=.png"></td></tr>
  <tr>
-  <td>
-   <label for="conf_name">Conference Name</label>
+   <td>
+    <label for="name">{{ type }} Name</label>
   </td>
   <td>
-    <input type="text" name="conf_name">
+    <input type="text" name="name">
   </td>
  </tr>
  <tr>
@@ -40,47 +42,46 @@ wrappy.util.registerOnLoad(init);
    Make waves public
   </td>
  </tr>
+  <tr>
+    <td></td>
+    <td><input type="button" name="createmain" value="Create Main Wave"><br>
+    </td>
+  </tr>
+<tr><td colspan="2"><img
+    src="http://chart.apis.google.com/chart?cht=it&chs=32x32&chco=5590D2,000000ff,ffffff01&chl=2&chx=FFFFFF,14&chf=bg,s,00000000&ext=.png"></td></tr>
  <tr><td colspan="2"><div class="divider"></div></td></tr></tr>
- <tr>
+<tr>
   <td>
     <label for="template">Session Template</label>
   </td>
   <td>
-    <input type="text" name="templates">
+    <input type="text" name="template">
   </td>
  </tr>
  <tr><td colspan="2"><div class="divider"></div></td></tr></tr>
  <tr>
   <td>
-   <label for="datasource">Data Source</label>
+   <label for="datasource_type">Data Source</label>
   </td>
   <td>
-   <select name="datasource">
+   <select name="datasource_type">
      <option name="spreadsheet">Spreadsheet</option>
      <option name="dapper">Dapper</option>
+     <option name="html">HTML</option>
    </select>
   </td>
   </tr>
   <tr>
    <td>
-    <label for="url">URL</label>
+    <label for="datasource_url">URL</label>
    </td>
    <td>
-    <input type="text" name="url">
-   </td>
-  </tr>
-  <tr>
-   <td>
-     <label>Preview</label>
-   </td>
-   <td>
-     <div id="preview">(Enter source first)</div>
+    <input type="text" name="datasource_url">
    </td>
   </tr>
   <tr>
     <td></td>
-    <td><input type="button" value="Create Conference Waves"><br>
-        <input type="button" value="Nuke Waves (Start Over">
+    <td><input type="button" name="createsessions" value="Create Session Waves"><br>
     </td>
   </tr>
 </table>

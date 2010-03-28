@@ -8,15 +8,19 @@ class Conference():
       self.sessions = sessions
 
 class Session():
-  def __init__(self, title, link=None, speakers=None, time=None, day=None,
-               location=None, description=None, speakers_image=None,
-               speakers_description=None):
-    self.title = title
+  def __init__(self, name, link=None, speakers=None, time=None, day=None,
+               location=None, description=None, id=None):
+    self.name = name
     self.link = link
-    self.speakers = speakers
-    self.speakers_image = speakers_image
-    self.speakers_description = speakers_description
+    self.id = id
     self.time = time
     self.day = day
     self.location = location
     self.description = description
+    # list of speakers
+    self.speakers = speakers or []
+
+class Speaker():
+  def __init__(self, name, link=None):
+    self.name = name
+    self.link = link

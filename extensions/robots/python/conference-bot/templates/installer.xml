@@ -1,0 +1,16 @@
+<extension 
+    name="{{ name }} Bot"
+    thumbnailUrl="http://chart.apis.google.com/chart?chst=d_fnote_title&amp;chld=balloon|1|004400|l|{{ name }}|Wiki-Bot"
+    description="Makes it easy to create new {{ name }} waves."> 
+  <author name="Google"/> 
+  <menuHook location="newwavemenu" text="New {{ name }} Wave (blank)"> 
+      <createNewWave> 
+        <participant id="bcc2010-bot+{{ id }}-newwave-blank@appspot.com" /> 
+      </createNewWave> 
+  </menuHook> 
+  <menuHook location="newwavemenu" text="New {{ name }}  Wave (event)"> 
+      <createNewWave> 
+        <participant id="bcc2010-bot+{{ id }}-newwave-event@appspot.com" /> 
+      </createNewWave>
+  </menuHook>
+</extension>

@@ -6,18 +6,21 @@
 </ModulePrefs>
 <Content type="html">
 <![CDATA[ 
-    <script src="{{server}}/js/util.js"></script>
+    <script src="{{server}}/js/wadget.js"></script>
     <script type="text/javascript">
+    var form;
     function onStateCallback() {
-//      wrappy.io.updateForm(form, formData);
+      wadget.io.updateForm(form);
     }
-    function init() {
+
+    function initWave() {
+      form = document.getElementById('admin_form');
       if (wave && wave.isInWaveContainer()) {
         wave.setStateCallback(onStateCallback);
-        wrappy.io.waveEnableForm(document.getElementById('admin_form'));
+        wadget.io.waveEnableForm(form);
       }
     }
-    gadgets.util.registerOnLoadHandler(init);
+    wadget.util.registerOnLoadHandler(initWave);
     </script>
     {% include "_admin_form.html" %}
   ]]> 
