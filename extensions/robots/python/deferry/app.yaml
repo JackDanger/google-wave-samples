@@ -1,0 +1,12 @@
+application: deferry-bot
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /_wave/.*
+  script: wave.py
+
+- url: /_ah/queue/deferred
+  script: $PYTHON_LIB/google/appengine/ext/deferred/deferred.py
+  login: admin
