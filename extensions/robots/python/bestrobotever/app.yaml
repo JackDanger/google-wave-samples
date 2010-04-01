@@ -1,0 +1,22 @@
+application: best-extension-ever
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /_wave/.*
+  script: wave.py
+
+- url: /installer.xml.*
+  static_files: installer.xml
+  upload: installer.xml
+  mime_type: text/xml
+
+- url: /icon_marquee.png
+  static_files: icon_marquee.png
+  upload: icon_marquee.png
+
+- url: /icon_blink.png
+  static_files: icon_blink.png
+  upload: icon_blink.png
+

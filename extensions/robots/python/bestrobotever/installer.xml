@@ -1,0 +1,20 @@
+<extension 
+    name="Best Extension Ever"
+    description="Lets you make banners, blinking text, and instant lolcats."
+    thumbnailUrl="http://best-website-ever.appspot.com/images/hamsterdance2.gif">
+  <author name="Google Wave Team"/>
+  <menuHook location="TOOLBAR" text="Marquee-ify"
+      iconUrl="http://best-extension-ever.appspot.com/icon_marquee.png">
+    <annotateSelection key="best-annotation-ever" value="marquee"/>
+    <addParticipants>
+      <participant id="best-extension-ever@appspot.com"/>
+    </addParticipants>
+  </menuHook>
+  <menuHook location="TOOLBAR" text="Blink-ify"
+      iconUrl="http://best-extension-ever.appspot.com/icon_blink.png">
+    <annotateSelection key="best-annotation-ever" value="blink"/>
+    <addParticipants>
+      <participant id="best-extension-ever@appspot.com"/>
+    </addParticipants>
+  </menuHook>
+</extension>
