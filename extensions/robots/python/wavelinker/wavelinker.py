@@ -33,7 +33,6 @@ def GoogleSearch(q, site=''):
 def Execute(event, wavelet):
   """Actual linking."""
   blip = event.blip
-  text = blip.text
   # construct the todo outside of the loop to avoid
   # influencing what we're observing:
   todo = []
@@ -41,9 +40,8 @@ def Execute(event, wavelet):
     if ann.name == ROBOT_KEY:
       todo.append((ann.start, ann.end, ann.value))
   # now call GoogleSearch for all values and insert a link if we get a matching
-  # url:
   for start, end, value in todo:
-    payload = text[start:end]
+    payload = blip.text[start:end]
     value_split = value.split('/', 1)
     if value.startswith('search/'):
       if len(value_split) > 1:
@@ -79,6 +77,5 @@ if __name__ == '__main__':
       image_url='http://www.seoish.com/wp-content/uploads/2009/04/wrench.png',
       profile_url='')
   linker.register_handler(events.WaveletSelfAdded, OnSelfAdded)
-  linker.register_handler(events.DocumentChanged, OnDocumentChanged)
   linker.register_handler(events.AnnotatedTextChanged, OnAnnotationChanged, filter=ROBOT_KEY)
   appengine_robot_runner.run(linker, debug=True)

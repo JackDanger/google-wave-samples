@@ -24,5 +24,8 @@ handlers:
 - url: /images
   static_dir: images
 
+- url: /installers
+  static_dir: installers
+
 - url: /_wave/.*
   script: wavelinker.py

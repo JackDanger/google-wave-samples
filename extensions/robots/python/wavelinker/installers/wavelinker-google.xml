@@ -1,11 +1,11 @@
 <extension 
-    name="WaveLinker"
-    description="Adds buttons that links the selected text to a matching Wikipedia page, definition, or Google result."
-    thumbnailUrl="http://wavelinker.appspot.com/preview.png"> 
+    name="WaveLinker - Google"
+    description="Adds buttons that links the selected text to the first Google result."
+    thumbnailUrl="http://wavelinker.appspot.com/preview.png">
   <author name="Google Wave Team"/> 
   <menuHook location="TOOLBAR" text="Link to first Google result"
-    iconUrl="http://wavelinker.appspot.com/images/icon_google.png"> 
-    <annotateSelection key="robot.wavelinker.request" value="search/"/> 
+    iconUrl="http://wavelinker.appspot.com/images/icon_google.png">
+    <annotateSelection key="robot.wavelinker.request" value="search/"/>
     <addParticipants> 
       <participant id="wavelinker@appspot.com"/>
     </addParticipants>
