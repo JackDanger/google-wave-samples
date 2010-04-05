@@ -1,0 +1,11 @@
+application:  seriously-this-should-work
+version:      1
+runtime:      python
+api_version:  1
+
+handlers:
+- url: /web/.*
+  script: wave.py
+
+- url: /_wave/.*
+  script: wave.py
