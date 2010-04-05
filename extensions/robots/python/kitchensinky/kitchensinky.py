@@ -1,3 +1,10 @@
+#!/usr/bin/python2.5
+#
+"""Implementation of the Everything and the Kitchen Sink bot
+
+This robot exercises our API by inserting a gadget that does embedding.
+"""
+
 import logging
 
 from waveapi import appengine_robot_runner
@@ -30,9 +37,24 @@ def OnBlipSubmitted(event, wavelet):
     # elements should always be updated through a BlipRefs to correspond
     # the matching operations for the wire.
     gadget.update_element({'seen': 'yes'})
-    blip.append('\nSeems all to have worked out.')
+    blip.append('\nThe gadget worked.')
+
     image = blip.first(element.Image)
-    image.update_element({'url': 'http://www.google.com/logos/poppy09.gif'})
+    if image:
+      image.update_element({'url': 'http://www.google.com/logos/poppy09.gif'})
+      blip.append('\nThe image worked -look for a poppy.')
+
+    installer = blip.first(element.Installer)
+    if installer:
+      installer.update_element({'manifest': 'http://google-wave-resources.googlecode.com/svn/trunk/samples/extensions/gadgets/mappy/installer.xml'})
+      blip.append('\nThe installer worked - look for a mappy.')
+
+    tags_check = (len(wavelet.tags) == 1)
+    if tags_check:
+      blip.append('\nThe tag worked.')
+
+    if image and installer and tags_check:
+      blip.append('\nSeems to have all worked out.')
 
 
 def OnSelfAdded(event, wavelet):
@@ -42,6 +64,9 @@ def OnSelfAdded(event, wavelet):
   wavelet.title = 'A wavelet title'
   blip.append(element.Image(url='http://www.google.com/logos/clickortreat1.gif',
                             width=320, height=118))
+  blip.append(element.Line(line_type='li', indent='2'))
+  blip.append('bulleted!')
+  blip.append(element.Installer('http://wave-skynet.appspot.com/public/extensions/areyouin/manifest.xml'))
 
   # add a reply to the blip authored by a proxy. Effectively
   # the address on this will be kitchensinky+proxy@appspot.com.
@@ -88,20 +113,27 @@ def OnWaveletCreated(event, wavelet):
       'http://kitchensinky.appspot.com/public/embed.xml')
   gadget.waveid = wavelet.wave_id
   org_wavelet.root_blip.append(gadget)
-  reply = org_wavelet.reply()
-  reply.append('Some test text')
-  org_wavelet.tags.append('activetag')
 
   # insert some non standard ascii characters:
-  org_wavelet.root_blip.append('\nInserted a gadget:')
+  # note: there seem to be some issues with the characters insertion
+  org_wavelet.root_blip.append('\nInserted a gadget: \xd0\xb0\xd0\xb1\xd0\xb2')
+
+  # insert a reply, and add some text to the reply
+  reply = org_wavelet.reply()
+  reply.append('Replying from blind_wavelet works')
+
+  # add a tag
+  org_wavelet.tags.append('blindtag')
 
   # again we have to explicitly submit the operations to the other
   # wavelet
   org_wavelet.submit_with(wavelet)
 
-
-def OnBlipDeleted(event, wavelet):
-  logging.info('blip deleted')
+def ProfileHandler(name):
+  if name == 'proxy':
+    return {'name': 'Douwe',
+            'imageUrl': 'http://www.igourmet.com/images/topics/douwe1.jpg',
+            'profileUrl': 'http://twitter.com/dosinga'}
 
 if __name__ == '__main__':
   sinky = robot.Robot('Kitchensinky',
@@ -111,6 +143,5 @@ if __name__ == '__main__':
   sinky.register_handler(events.WaveletCreated,
                         OnWaveletCreated)
   sinky.register_handler(events.BlipSubmitted, OnBlipSubmitted)
-  sinky.register_handler(events.WaveletBlipRemoved, OnBlipDeleted)
-
+  sinky.register_profile_handler(ProfileHandler)
   appengine_robot_runner.run(sinky, debug=True)
